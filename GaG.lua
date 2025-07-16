@@ -97,8 +97,8 @@ FarmTab:CreateToggle({
                service:FireServer("SetRecipe", station, "GearEventWorkbench", selectedRecipe)
                wait(0.3)
 
-               -- Submit Held Item (auto-held by game)
-               service:FireServer("SubmitHeldItemForCrafting", station, "GearEventWorkbench")
+               -- Submit Item (FIXED!)
+               service:FireServer("SubmitHeldItemForCrafting", station)
                wait(0.3)
 
                -- Craft
