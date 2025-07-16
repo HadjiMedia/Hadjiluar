@@ -69,15 +69,26 @@ local Button = PlayerTab:CreateButton({
 })
 
 
-local Button = FarmTab:CreateButton({
-   Name = "Craft Anti Bee Egg",
-   Callback = function()
-   local args = {
-	"SetRecipe",
-	workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
-	"GearEventWorkbench",
-	"Anti Bee Egg"
-}
-game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+local CraftingTab = Window:CreateTab("Craft", nil)
+
+local Recipes = {"Anti Bee Egg", "Small Toy", "Reclaimer"}
+
+local Dropdown = CraftingTab:CreateDropdown({
+   Name = "Select Recipe",
+   Options = Recipes,
+   CurrentOption = Recipes[1],
+   MultipleOptions = false,
+   Flag = "SelectedRecipe",
+   Callback = function(option)
+      local args = {
+         "SetRecipe",
+         workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
+         "GearEventWorkbench",
+         option -- selected recipe
+      }
+      game:GetService("ReplicatedStorage")
+          :WaitForChild("GameEvents")
+          :WaitForChild("CraftingGlobalObjectService")
+          :FireServer(unpack(args))
    end,
 })
