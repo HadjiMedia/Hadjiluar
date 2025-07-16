@@ -69,11 +69,10 @@ local Button = PlayerTab:CreateButton({
 })
 
 
-local CraftingTab = Window:CreateTab("Craft", nil)
 
 local Recipes = {"Anti Bee Egg", "Small Toy", "Reclaimer"}
 
-local Dropdown = CraftingTab:CreateDropdown({
+local Dropdown = FarmTab:CreateDropdown({
    Name = "Select Recipe",
    Options = Recipes,
    CurrentOption = Recipes[1],
