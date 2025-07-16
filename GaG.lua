@@ -35,7 +35,7 @@ local ShopTab = Window:CreateTab("Shop", nil)
 local PlayerTab = Window:CreateTab("Local Player", nil)
 local MiscTab = Window:CreateTab("Misc", nil)
 
--- Infinite Jump
+-- 🟢 Infinite Jump
 PlayerTab:CreateButton({
     Name = "Infinite Jump",
     Callback = function()
@@ -58,14 +58,14 @@ PlayerTab:CreateButton({
     end,
 })
 
--- Auto Craft
+-- 🛠️ Auto Crafting Setup
 local selectedRecipe = "Reclaimer"
 local autoCraft = false
 
 FarmTab:CreateDropdown({
     Name = "Select Recipe",
     Options = {"Reclaimer", "Small Toy", "Anti Bee Egg"},
-    CurrentOption = "Reclaimer",
+    CurrentOption = selectedRecipe,
     Callback = function(option)
         selectedRecipe = option
     end,
@@ -83,12 +83,15 @@ FarmTab:CreateToggle({
                         local station = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench")
                         local service = game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService")
 
+                        -- Set recipe
                         service:FireServer("SetRecipe", station, "GearEventWorkbench", selectedRecipe)
-                        task.wait(0.3)
+                        task.wait(0.25)
 
+                        -- Submit held item
                         service:FireServer("SubmitHeldItemForCrafting", station)
-                        task.wait(0.3)
+                        task.wait(0.25)
 
+                        -- Craft item
                         service:FireServer("Craft", station, "GearEventWorkbench")
                     end)
                     task.wait(2)
