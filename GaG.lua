@@ -70,39 +70,56 @@ local Button = PlayerTab:CreateButton({
 
 
 
-local selectedRecipe = "Anti Bee Egg" -- Default value
+local selectedRecipe = "Anti Bee Egg"
+local autoCraft = false
 
--- Dropdown to select recipe
+-- Dropdown to choose recipe
 FarmTab:CreateDropdown({
    Name = "Select Recipe",
-   Options = {"Anti Bee Egg", "Dragonfly Trap", "Queen Bee Potion"},
+   Options = {"Anti Bee Egg", "Small Toy", "Reclaimer"},
    CurrentOption = "Anti Bee Egg",
-   Flag = "CraftingDropdown",
    Callback = function(option)
       selectedRecipe = option
    end,
 })
 
 -- Toggle to auto-craft
-local autoCraft = false
-
 FarmTab:CreateToggle({
    Name = "Auto Craft",
    CurrentValue = false,
-   Flag = "AutoCraftToggle",
    Callback = function(state)
       autoCraft = state
-      if autoCraft then
+      if state then
          task.spawn(function()
             while autoCraft do
-               local args = {
+               local station = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench")
+               
+               -- Step 1: Set Recipe
+               local setArgs = {
                   "SetRecipe",
-                  workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
+                  station,
                   "GearEventWorkbench",
                   selectedRecipe
                }
-               game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
-               wait(2) -- delay between attempts
+               game:GetService("ReplicatedStorage")
+                  :WaitForChild("GameEvents")
+                  :WaitForChild("CraftingGlobalObjectService")
+                  :FireServer(unpack(setArgs))
+               
+               wait(0.5)
+
+               -- Step 2: Start Crafting
+               local craftArgs = {
+                  "Craft",
+                  station,
+                  "GearEventWorkbench"
+               }
+               game:GetService("ReplicatedStorage")
+                  :WaitForChild("GameEvents")
+                  :WaitForChild("CraftingGlobalObjectService")
+                  :FireServer(unpack(craftArgs))
+
+               wait(2)
             end
          end)
       end
