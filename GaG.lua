@@ -14,7 +14,7 @@ local Window = Rayfield:CreateWindow({
    DisableBuildWarnings = false,
 
    ConfigurationSaving = {
-      Enabled = true,
+ ok     Enabled = true,
       FolderName = nil,
       FileName = "GAG"
    },
@@ -70,55 +70,39 @@ local Button = PlayerTab:CreateButton({
 
 
 
-local selectedRecipe = "Anti Bee Egg"
+local selectedRecipe = "Reclaimer"
 local autoCraft = false
 
--- Dropdown to choose recipe
 FarmTab:CreateDropdown({
    Name = "Select Recipe",
-   Options = {"Anti Bee Egg", "Small Toy", "Reclaimer"},
-   CurrentOption = "Anti Bee Egg",
+   Options = {"Reclaimer", "Small Toy", "Anti Bee Egg"},
+   CurrentOption = "Reclaimer",
    Callback = function(option)
       selectedRecipe = option
    end,
 })
 
--- Toggle to auto-craft
 FarmTab:CreateToggle({
    Name = "Auto Craft",
    CurrentValue = false,
    Callback = function(state)
       autoCraft = state
-      if state then
+      if autoCraft then
          task.spawn(function()
             while autoCraft do
                local station = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench")
-               
-               -- Step 1: Set Recipe
-               local setArgs = {
-                  "SetRecipe",
-                  station,
-                  "GearEventWorkbench",
-                  selectedRecipe
-               }
-               game:GetService("ReplicatedStorage")
-                  :WaitForChild("GameEvents")
-                  :WaitForChild("CraftingGlobalObjectService")
-                  :FireServer(unpack(setArgs))
-               
-               wait(0.5)
+               local service = game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService")
 
-               -- Step 2: Start Crafting
-               local craftArgs = {
-                  "Craft",
-                  station,
-                  "GearEventWorkbench"
-               }
-               game:GetService("ReplicatedStorage")
-                  :WaitForChild("GameEvents")
-                  :WaitForChild("CraftingGlobalObjectService")
-                  :FireServer(unpack(craftArgs))
+               -- Set Recipe
+               service:FireServer("SetRecipe", station, "GearEventWorkbench", selectedRecipe)
+               wait(0.3)
 
+               -- Submit Held Item (auto-held by game)
+               service:FireServer("SubmitHeldItemForCrafting", station, "GearEventWorkbench")
+               wait(0.3)
+
+               -- Craft
+               service:FireServer("Craft", station, "GearEventWorkbench")
                wait(2)
             end
          end)
