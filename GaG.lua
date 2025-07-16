@@ -70,24 +70,41 @@ local Button = PlayerTab:CreateButton({
 
 
 
-local Recipes = {"Anti Bee Egg", "Small Toy", "Reclaimer"}
+local selectedRecipe = "Anti Bee Egg" -- Default value
 
-local Dropdown = FarmTab:CreateDropdown({
+-- Dropdown to select recipe
+FarmTab:CreateDropdown({
    Name = "Select Recipe",
-   Options = Recipes,
-   CurrentOption = Recipes[1],
-   MultipleOptions = false,
-   Flag = "SelectedRecipe",
+   Options = {"Anti Bee Egg", "Dragonfly Trap", "Queen Bee Potion"},
+   CurrentOption = "Anti Bee Egg",
+   Flag = "CraftingDropdown",
    Callback = function(option)
-      local args = {
-         "SetRecipe",
-         workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
-         "GearEventWorkbench",
-         option -- selected recipe
-      }
-      game:GetService("ReplicatedStorage")
-          :WaitForChild("GameEvents")
-          :WaitForChild("CraftingGlobalObjectService")
-          :FireServer(unpack(args))
+      selectedRecipe = option
+   end,
+})
+
+-- Toggle to auto-craft
+local autoCraft = false
+
+FarmTab:CreateToggle({
+   Name = "Auto Craft",
+   CurrentValue = false,
+   Flag = "AutoCraftToggle",
+   Callback = function(state)
+      autoCraft = state
+      if autoCraft then
+         task.spawn(function()
+            while autoCraft do
+               local args = {
+                  "SetRecipe",
+                  workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench"),
+                  "GearEventWorkbench",
+                  selectedRecipe
+               }
+               game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService"):FireServer(unpack(args))
+               wait(2) -- delay between attempts
+            end
+         end)
+      end
    end,
 })
