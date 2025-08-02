@@ -66,53 +66,23 @@ PlayerTab:CreateToggle({
     end,
 })
 
--- 🔧 Auto Craft Setup
-local selectedRecipe = "Reclaimer"
-local autoCraft = false
-local craftDelay = 2
+-- 🔧 Auto submit cook
+local autoSubmit = false
 
-FarmTab:CreateDropdown({
-    Name = "Select Recipe",
-    Options = {"Reclaimer", "Small Toy", "Anti Bee Egg"},
-    CurrentOption = selectedRecipe,
-    Callback = function(option)
-        selectedRecipe = option
-    end,
-})
-
-FarmTab:CreateSlider({
-    Name = "Craft Delay (seconds)",
-    Range = {0.5, 5},
-    Increment = 0.5,
-    CurrentValue = craftDelay,
-    Callback = function(value)
-        craftDelay = value
-    end,
-})
-
-FarmTab:CreateToggle({
-    Name = "Auto Craft",
+YourTab:CreateToggle({
+    Name = "Auto Submit Held Plant",
     CurrentValue = false,
-    Callback = function(state)
-        autoCraft = state
-        if autoCraft then
-            task.spawn(function()
-                while autoCraft do
-                    pcall(function()
-                        local station = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench")
-                        local service = game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService")
-
-                        service:FireServer("SetRecipe", station, "GearEventWorkbench", selectedRecipe)
-                        task.wait(0.25)
-
-                        service:FireServer("SubmitHeldItemForCrafting", station)
-                        task.wait(0.25)
-
-                        service:FireServer("Craft", station, "GearEventWorkbench")
-                    end)
-                    task.wait(craftDelay)
-                end
-            end)
-        end
+    Callback = function(Value)
+        autoSubmit = Value
     end,
 })
+
+task.spawn(function()
+    while true do
+        if autoSubmit then
+            local args = { "SubmitHeldPlant" }
+            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CookingPotService_RE"):FireServer(unpack(args))
+        end
+        task.wait(0.5)
+    end
+end)
