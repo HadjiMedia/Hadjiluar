@@ -69,7 +69,7 @@ PlayerTab:CreateToggle({
 -- 🔧 Auto submit cook
 local autoSubmit = false
 
-YourTab:CreateToggle({
+FarmTab:CreateToggle({
     Name = "Auto Submit Held Plant",
     CurrentValue = false,
     Callback = function(Value)
