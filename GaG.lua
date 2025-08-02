@@ -6,12 +6,12 @@ local Window = Rayfield:CreateWindow({
     LoadingSubtitle = "by Hadji",
     ConfigurationSaving = {
         Enabled = true,
-        FolderName = nil, -- You can set a folder name if needed
+        FolderName = nil, -- Optional: set folder name
         FileName = "GAG"
     },
     Discord = {
         Enabled = true,
-        Invite = "Hadji", -- Your actual invite code only, not full link
+        Invite = "Hadji", -- Discord invite code only (no URL)
         RememberJoins = true
     },
     KeySystem = true,
@@ -32,11 +32,12 @@ local ShopTab = Window:CreateTab("Shop", nil)
 local PlayerTab = Window:CreateTab("Local Player", nil)
 local MiscTab = Window:CreateTab("Misc", nil)
 
--- 🟢 Infinite Jump
-PlayerTab:CreateButton({
+-- 🔄 Infinite Jump (Toggle)
+PlayerTab:CreateToggle({
     Name = "Infinite Jump",
-    Callback = function()
-        _G.infinjump = true
+    CurrentValue = false,
+    Callback = function(value)
+        _G.infinjump = value
         local UIS = game:GetService("UserInputService")
         local LP = game:GetService("Players").LocalPlayer
 
@@ -45,7 +46,7 @@ PlayerTab:CreateButton({
         if not _G._infJumpConnection then
             _G._infJumpConnection = UIS.JumpRequest:Connect(function()
                 if _G.infinjump then
-                    local humanoid = LP.Character:FindFirstChildOfClass("Humanoid")
+                    local humanoid = LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")
                     if humanoid then
                         humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
                     end
@@ -55,9 +56,10 @@ PlayerTab:CreateButton({
     end,
 })
 
--- 🛠️ Auto Crafting Setup
+-- 🔧 Auto Craft Setup
 local selectedRecipe = "Reclaimer"
 local autoCraft = false
+local craftDelay = 2
 
 FarmTab:CreateDropdown({
     Name = "Select Recipe",
@@ -65,6 +67,16 @@ FarmTab:CreateDropdown({
     CurrentOption = selectedRecipe,
     Callback = function(option)
         selectedRecipe = option
+    end,
+})
+
+FarmTab:CreateSlider({
+    Name = "Craft Delay (seconds)",
+    Range = {0.5, 5},
+    Increment = 0.5,
+    CurrentValue = craftDelay,
+    Callback = function(value)
+        craftDelay = value
     end,
 })
 
@@ -80,18 +92,15 @@ FarmTab:CreateToggle({
                         local station = workspace:WaitForChild("CraftingTables"):WaitForChild("EventCraftingWorkBench")
                         local service = game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CraftingGlobalObjectService")
 
-                        -- Set recipe
                         service:FireServer("SetRecipe", station, "GearEventWorkbench", selectedRecipe)
                         task.wait(0.25)
 
-                        -- Submit held item
                         service:FireServer("SubmitHeldItemForCrafting", station)
                         task.wait(0.25)
 
-                        -- Craft item
                         service:FireServer("Craft", station, "GearEventWorkbench")
                     end)
-                    task.wait(2)
+                    task.wait(craftDelay)
                 end
             end)
         end
