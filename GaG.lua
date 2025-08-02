@@ -1,29 +1,39 @@
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "👨🏿‍🌾 Grow a Garden Script 👩🏻‍🌾",
-    LoadingTitle = "🌱 Grow a Garden Script 🌿",
-    LoadingSubtitle = "by Hadji",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = nil, -- Optional: set folder name
-        FileName = "GAG"
-    },
-    Discord = {
-        Enabled = true,
-        Invite = "Hadji", -- Discord invite code only (no URL)
-        RememberJoins = true
-    },
-    KeySystem = true,
-    KeySettings = {
-        Title = "Grow a Garden | Key",
-        Subtitle = "Key System",
-        Note = "Join the Discord Server to get the key",
-        FileName = "Key",
-        SaveKey = true,
-        GrabKeyFromSite = true,
-        KeyLink = "https://pastebin.com/raw/GpkZHNdm"
-    }
+   Name = "👨🏿‍🌾 Grow a Garden Script 👩🏻‍🌾",
+   Icon = 0,
+   LoadingTitle = "🌱 Grow a Garden Script 🌿",
+   LoadingSubtitle = "by Hadji",
+   ShowText = "Rayfield",
+   Theme = "Default",
+   ToggleUIKeybind = "K",
+
+   DisableRayfieldPrompts = false,
+   DisableBuildWarnings = false,
+
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = nil,
+      FileName = "GAG"
+   },
+
+   Discord = {
+      Enabled = false,
+      Invite = "Hadji",
+      RememberJoins = true
+   },
+
+   KeySystem = true,
+   KeySettings = {
+      Title = "Grow a Garden | Key",
+      Subtitle = "Key System",
+      Note = "Join the Discord Server to get the key",
+      FileName = "Key",
+      SaveKey = true,
+      GrabKeyFromSite = true,
+      Key = {"https://pastebin.com/raw/GpkZHNdm"} -- Correct way to list key link
+   }
 })
 
 -- Tabs
