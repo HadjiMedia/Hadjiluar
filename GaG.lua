@@ -4,17 +4,14 @@ local Window = Rayfield:CreateWindow({
     Name = "👨🏿‍🌾 Grow a Garden Script 👩🏻‍🌾",
     LoadingTitle = "🌱 Grow a Garden Script 🌿",
     LoadingSubtitle = "by Hadji",
-    ShowText = "Rayfield UI",
-    Theme = "Default",
-    ToggleUIKeybind = Enum.KeyCode.K,
     ConfigurationSaving = {
         Enabled = true,
-        FolderName = nil,
+        FolderName = nil, -- You can set a folder name if needed
         FileName = "GAG"
     },
     Discord = {
-        Enabled = false,
-        Invite = "Hadji",
+        Enabled = true,
+        Invite = "Hadji", -- Your actual invite code only, not full link
         RememberJoins = true
     },
     KeySystem = true,
