@@ -66,7 +66,7 @@ PlayerTab:CreateToggle({
     end,
 })
 
--- 🔧 Auto submit cook
+-- 🔧 Auto Submit Cook
 local autoSubmit = false
 
 FarmTab:CreateToggle({
@@ -80,8 +80,10 @@ FarmTab:CreateToggle({
 task.spawn(function()
     while true do
         if autoSubmit then
-            local args = { "SubmitHeldPlant" }
-            game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CookingPotService_RE"):FireServer(unpack(args))
+            pcall(function()
+                local args = { "SubmitHeldPlant" }
+                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CookingPotService_RE"):FireServer(unpack(args))
+            end)
         end
         task.wait(0.5)
     end
