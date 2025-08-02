@@ -69,12 +69,13 @@ PlayerTab:CreateToggle({
 -- 🔧 Auto Submit Cook
 local autoSubmit = false
 
-FarmTab:CreateToggle({
-    Name = "Auto Submit Held Plant",
-    CurrentValue = false,
-    Callback = function(Value)
-        autoSubmit = Value
-    end,
+local Toggle = FarmTab:CreateToggle({
+   Name = "Auto Submit Held Plant",
+   CurrentValue = false,
+   Flag = "AutoSubmitToggle", -- Unique identifier for config saving
+   Callback = function(Value)
+       autoSubmit = Value
+   end,
 })
 
 task.spawn(function()
