@@ -90,8 +90,57 @@ task.spawn(function()
     end
 end)
 
+--Auto Cook
+local autoCook = false
+
+local Toggle = FarmTab:CreateToggle({
+   Name = "Auto Cook Pot",
+   CurrentValue = false,
+   Flag = "AutoCookToggle", -- Unique identifier for config saving
+   Callback = function(Value)
+       autoCook = Value
+   end,
+})
+
+task.spawn(function()
+    while true do
+        if autoCook then
+            pcall(function()
+                local args = { "CookBest" }
+                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CookingPotService_RE"):FireServer(unpack(args))
+            end)
+        end
+        task.wait(0.5)
+    end
+end)
+
+--Auto Submit Food to Pig
+local autoSubmitP = false
+
+local Toggle = FarmTab:CreateToggle({
+   Name = "Auto Submit Held Food to Chris P.",
+   CurrentValue = false,
+   Flag = "AutoSubmitPToggle", -- Unique identifier for config saving
+   Callback = function(Value)
+       autoSubmitP = Value
+   end,
+})
+
+task.spawn(function()
+    while true do
+        if autoSubmitP then
+            pcall(function()
+                local args = { "SubmitHeldFood" }
+                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SubmitFoodService_RE"):FireServer(unpack(args))
+            end)
+        end
+        task.wait(0.5)
+    end
+end)
+
+--Empty Recipe
 FarmTab:CreateButton({
-    Name = "🧼 Empty Cooking Pot",
+    Name = "Empty Cooking Pot",
     Callback = function()
         game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CookingPotService_RE"):FireServer("EmptyPot")
     end,
