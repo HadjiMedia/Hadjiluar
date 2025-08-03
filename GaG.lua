@@ -109,7 +109,7 @@ end)
 -- Farm Tab
 
 FarmTab:CreateLabel("Automatic Service")
-AutoTab:CreateToggle({
+FarmTab:CreateToggle({
     Name = "Auto Plant Held Seed",
     CurrentValue = false,
     Callback = function(Value)
