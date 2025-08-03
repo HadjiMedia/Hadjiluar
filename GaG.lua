@@ -54,39 +54,35 @@ PlayerTab:CreateToggle({
     end,
 })
 
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local Humanoid = Character:WaitForChild("Humanoid")
-
 -- WalkSpeed Slider
-PlayerTab:CreateSlider({
+local WalkSpeedSlider = PlayerTab:CreateSlider({
     Name = "WalkSpeed",
     Range = {16, 150},
     Increment = 1,
     Suffix = "Speed",
     CurrentValue = 16,
-    Flag = "SpeedSlider",
-    Callback = function(value)
-        pcall(function()
-            Humanoid.WalkSpeed = value
-        end)
+    Flag = "WalkSpeedSlider",
+    Callback = function(Value)
+        local char = game.Players.LocalPlayer.Character
+        if char and char:FindFirstChildOfClass("Humanoid") then
+            char:FindFirstChildOfClass("Humanoid").WalkSpeed = Value
+        end
     end,
 })
 
 -- JumpPower Slider
-PlayerTab:CreateSlider({
+local JumpPowerSlider = PlayerTab:CreateSlider({
     Name = "JumpPower",
     Range = {50, 200},
     Increment = 5,
     Suffix = "Power",
     CurrentValue = 50,
-    Flag = "JumpSlider",
-    Callback = function(value)
-        pcall(function()
-            Humanoid.JumpPower = value
-        end)
+    Flag = "JumpPowerSlider",
+    Callback = function(Value)
+        local char = game.Players.LocalPlayer.Character
+        if char and char:FindFirstChildOfClass("Humanoid") then
+            char:FindFirstChildOfClass("Humanoid").JumpPower = Value
+        end
     end,
 })
 
