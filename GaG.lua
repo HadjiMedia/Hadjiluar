@@ -66,6 +66,8 @@ PlayerTab:CreateToggle({
     end,
 })
 
+
+FarmTab:CreateLabel("Cooking Event")
 -- 🔧 Auto Submit Cook
 local autoSubmit = false
 
