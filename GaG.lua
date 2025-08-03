@@ -170,3 +170,77 @@ task.spawn(function()
         task.wait(1)
     end
 end)
+
+
+--MISC TAB🌟
+Tab:CreateButton({
+    Name = "Rejoin Server",
+    Callback = function()
+        local TeleportService = game:GetService("TeleportService")
+        local Players = game:GetService("Players")
+        local placeId = game.PlaceId
+        local player = Players.LocalPlayer
+
+        TeleportService:Teleport(placeId, player)
+    end,
+})
+
+local Players = game:GetService("Players")
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Current JobId (read-only)
+local currentJobId = game.JobId or "Unavailable"
+
+-- UI Elements
+Tab:CreateParagraph({
+    Title = "Your JobId",
+    Content = currentJobId
+})
+
+Tab:CreateButton({
+    Name = " Copy JobId to Clipboard",
+    Callback = function()
+        if setclipboard then
+            setclipboard(currentJobId)
+            print("JobId copied to clipboard!")
+        else
+            warn("Clipboard not supported in your environment.")
+        end
+    end
+})
+
+Tab:CreateInput({
+    Name = " Enter JobId to Join",
+    PlaceholderText = "Paste JobId here...",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(inputJobId)
+        if inputJobId and inputJobId ~= "" then
+            TeleportService:TeleportToPlaceInstance(game.PlaceId, inputJobId, LocalPlayer)
+        else
+            warn("Invalid JobId entered.")
+        end
+    end
+})
+
+Tab:CreateButton({
+    Name = " Server Hop",
+    Callback = function()
+        local url = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
+        local success, result = pcall(function()
+            return HttpService:JSONDecode(game:HttpGet(url))
+        end)
+
+        if success and result and result.data then
+            for _, server in ipairs(result.data) do
+                if server.playing < server.maxPlayers and server.id ~= currentJobId then
+                    TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
+                    break
+                end
+            end
+        else
+            warn("Server hop failed.")
+        end
+    end
+})
