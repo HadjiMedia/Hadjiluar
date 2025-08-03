@@ -138,7 +138,7 @@ ShopTab:CreateLabel("🌱 Multi-select seeds to buy")
 ShopTab:CreateDropdown({
     Name = "Seed List",
     Options = seedShopList,
-    MultiSelection = true, -- ✅ CORRECT
+    MultipleOptions = true, -- ✅ CORRECT
     Default = {},
     Callback = function(values)
         selectedSeeds = values
