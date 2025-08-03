@@ -42,6 +42,8 @@ local ShopTab = Window:CreateTab("Shop", nil)
 local PlayerTab = Window:CreateTab("Local Player", nil)
 local MiscTab = Window:CreateTab("Misc", nil)
 
+
+--MISC TAB‼️
 -- 🔄 Infinite Jump (Toggle)
 PlayerTab:CreateToggle({
     Name = "Infinite Jump",
@@ -67,6 +69,8 @@ PlayerTab:CreateToggle({
 })
 
 
+
+--FARM TAB‼️
 FarmTab:CreateLabel("Cooking Event")
 -- 🔧 Auto Submit Cook
 local autoSubmit = false
@@ -147,3 +151,68 @@ FarmTab:CreateButton({
         game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CookingPotService_RE"):FireServer("EmptyPot")
     end,
 })
+
+
+
+--SHOP TAB‼️
+
+-- ✅ Only seed shop seeds
+local seedShopList = {
+    "Carrot", "Strawberry", "Blueberry", "Orange Tulip",
+    "Tomato", "Daffodil", "Cauliflower", "Raspberry",
+    "Watermelon", "Pumpkin", "Apple", "Bamboo", "Avocado",
+    "Banana", "Pineapple", "Coconut", "Cactus", "Dragon Fruit",
+    "Mango", "Grape", "Mushroom", "Pepper", "Cacao", "Beanstalk",
+    "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry"
+}
+
+local selectedSeeds = {}
+
+local Window = Rayfield:CreateWindow({
+    Name = "🌾 Seed Shop Buyer",
+    LoadingTitle = "Loading...",
+    LoadingSubtitle = "by Hadji",
+    ConfigurationSaving = {
+        Enabled = false
+    }
+})
+
+local Tab = Window:CreateTab("🛒 Shop", nil)
+Tab:CreateLabel("🌱 Multi-select seeds to buy")
+
+Tab:CreateDropdown({
+    Name = "Seed List",
+    Options = seedShopList,
+    MultipleOptions = true,
+    Callback = function(values)
+        selectedSeeds = values
+    end
+})
+
+local autoBuyS = false
+
+local Toggle = Tab:CreateToggle({
+   Name = "✅ Auto Buy Selected Seeds",
+   CurrentValue = false,
+   Flag = "AutoBuyToggle",
+   Callback = function(Value)
+       autoBuyS = Value
+   end,
+})
+
+task.spawn(function()
+    while true do
+        if autoBuyS then
+            for _, seedName in ipairs(selectedSeeds) do
+                local args = { seedName }
+                pcall(function()
+                    game:GetService("ReplicatedStorage"):WaitForChild("GameEvents")
+                        :WaitForChild("BuySeedStock"):FireServer(unpack(args))
+                    print("Buying:", seedName)
+                end)
+                task.wait(0.25)
+            end
+        end
+        task.wait(1) -- Wait before next auto-buy cycle
+    end
+end)
