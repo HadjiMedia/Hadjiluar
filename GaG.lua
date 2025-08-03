@@ -107,18 +107,21 @@ FarmTab:CreateToggle({
 		task.spawn(function()
 			while getgenv().AutoPlant do
 				local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-				local root = char and char:FindFirstChild("HumanoidRootPart")
-				local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Tool")
+				local root = char:FindFirstChild("HumanoidRootPart")
+				local heldTool = char:FindFirstChildWhichIsA("Tool")
 
-				if root and tool then
-					local position = root.Position
-					local seedName = tool.Name
+				if root and heldTool then
+					-- Extract the base name from the tool (e.g., "Carrot Seed [X2121]" ➜ "Carrot")
+					local baseName = heldTool.Name:match("^(.-) Seed")
 
-					pcall(function()
-						ReplicatedStorage.GameEvents.Plant_RE:FireServer(position, seedName)
-					end)
+					if baseName then
+						local position = root.Position
+						pcall(function()
+							ReplicatedStorage.GameEvents.Plant_RE:FireServer(position, baseName)
+						end)
+					end
 				end
-				task.wait(1.5) -- Faster loop, can be increased
+				task.wait(1.5)
 			end
 		end)
 	end,
