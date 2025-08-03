@@ -54,6 +54,64 @@ PlayerTab:CreateToggle({
     end,
 })
 
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+local Humanoid = Character:WaitForChild("Humanoid")
+
+-- WalkSpeed Slider
+PlayerTab:CreateSlider({
+    Name = "WalkSpeed",
+    Range = {16, 150},
+    Increment = 1,
+    Suffix = "Speed",
+    CurrentValue = 16,
+    Flag = "SpeedSlider",
+    Callback = function(value)
+        pcall(function()
+            Humanoid.WalkSpeed = value
+        end)
+    end,
+})
+
+-- JumpPower Slider
+PlayerTab:CreateSlider({
+    Name = "JumpPower",
+    Range = {50, 200},
+    Increment = 5,
+    Suffix = "Power",
+    CurrentValue = 50,
+    Flag = "JumpSlider",
+    Callback = function(value)
+        pcall(function()
+            Humanoid.JumpPower = value
+        end)
+    end,
+})
+
+-- No Clip Toggle
+local noclip = false
+
+PlayerTab:CreateToggle({
+    Name = "No Clip",
+    CurrentValue = false,
+    Flag = "NoClipToggle",
+    Callback = function(value)
+        noclip = value
+    end,
+})
+
+RunService.Stepped:Connect(function()
+    if noclip then
+        for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+            if part:IsA("BasePart") and part.CanCollide then
+                part.CanCollide = false
+            end
+        end
+    end
+end)
+
 -- 🌟 FARM TAB
 FarmTab:CreateLabel("Cooking Event")
 
