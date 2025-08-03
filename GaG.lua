@@ -89,3 +89,10 @@ task.spawn(function()
         task.wait(0.5)
     end
 end)
+
+FarmTab:CreateButton({
+    Name = "🧼 Empty Cooking Pot",
+    Callback = function()
+        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CookingPotService_RE"):FireServer("EmptyPot")
+    end,
+})
