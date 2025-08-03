@@ -101,11 +101,8 @@ FarmTab:CreateLabel("Automatic Service")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
-local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 
 local LocalPlayer = Players.LocalPlayer
-local Camera = Workspace.CurrentCamera
 local Plant_RE = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Plant_RE")
 
 local rayParams = RaycastParams.new()
@@ -114,20 +111,22 @@ rayParams.FilterDescendantsInstances = {Workspace.Dirt_VFX}
 
 getgenv().AutoPlant = false
 
--- 🌿 Rayfield Toggle Button (Auto Plant)
+-- 🌿 Rayfield Toggle Button (Auto Plant at Humanoid Position)
 FarmTab:CreateToggle({
-	Name = "Auto Plant Seeds",
+	Name = "Auto Plant Seeds (Humanoid)",
 	CurrentValue = false,
 	Callback = function(state)
 		getgenv().AutoPlant = state
 
 		task.spawn(function()
 			while getgenv().AutoPlant do
-				local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool")
-				if tool and tool.Name:find("Seed") and tool:GetAttribute("Quantity") > 0 then
-					local mousePos = UserInputService:GetMouseLocation()
-					local ray = Camera:ViewportPointToRay(mousePos.X, mousePos.Y)
-					local result = Workspace:Raycast(ray.Origin, ray.Direction * 100, rayParams)
+				local char = LocalPlayer.Character
+				local hrp = char and char:FindFirstChild("HumanoidRootPart")
+				local tool = char and char:FindFirstChildOfClass("Tool")
+
+				if hrp and tool and tool.Name:find("Seed") and tool:GetAttribute("Quantity") > 0 then
+					-- Raycast straight down from HumanoidRootPart
+					local result = Workspace:Raycast(hrp.Position, Vector3.new(0, -10, 0), rayParams)
 
 					if result and result.Instance and result.Instance.Name == "Can_Plant" then
 						local owner = result.Instance.Parent and result.Instance.Parent.Parent:FindFirstChild("Data")
