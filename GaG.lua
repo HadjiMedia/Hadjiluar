@@ -168,19 +168,9 @@ local seedShopList = {
 
 local selectedSeeds = {}
 
-local Window = Rayfield:CreateWindow({
-    Name = "🌾 Seed Shop Buyer",
-    LoadingTitle = "Loading...",
-    LoadingSubtitle = "by Hadji",
-    ConfigurationSaving = {
-        Enabled = false
-    }
-})
+ShopTab:CreateLabel("🌱 Multi-select seeds to buy")
 
-local Tab = Window:CreateTab("🛒 Shop", nil)
-Tab:CreateLabel("🌱 Multi-select seeds to buy")
-
-Tab:CreateDropdown({
+ShopTab:CreateDropdown({
     Name = "Seed List",
     Options = seedShopList,
     MultipleOptions = true,
@@ -191,7 +181,7 @@ Tab:CreateDropdown({
 
 local autoBuyS = false
 
-local Toggle = Tab:CreateToggle({
+local Toggle = ShopTab:CreateToggle({
    Name = "✅ Auto Buy Selected Seeds",
    CurrentValue = false,
    Flag = "AutoBuyToggle",
