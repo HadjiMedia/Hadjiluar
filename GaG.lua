@@ -107,6 +107,42 @@ RunService.Stepped:Connect(function()
 end)
 
 -- Farm Tab
+
+FarmTab:CreateLabel("Automatic Service")
+AutoTab:CreateToggle({
+    Name = "Auto Plant Held Seed",
+    CurrentValue = false,
+    Callback = function(Value)
+        getgenv().AutoPlant = Value
+
+        task.spawn(function()
+            while getgenv().AutoPlant do
+                local player = game.Players.LocalPlayer
+                local character = player.Character or player.CharacterAdded:Wait()
+                local rootPart = character:FindFirstChild("HumanoidRootPart")
+
+                if rootPart then
+                    -- Assuming you have a way to get the held seed, like from the player's inventory or UI
+                    local heldSeed = player:FindFirstChild("HeldSeed")  -- Adjust this to how you track the held seed
+
+                    if heldSeed then
+                        local args = {
+                            rootPart.Position,  -- Plant where the player stands
+                            heldSeed.Value      -- Use the current held seed (adjust according to your setup)
+                        }
+
+                        game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("Plant_RE"):FireServer(unpack(args))
+                    end
+                end
+
+                task.wait(2) -- Adjust delay between plant attempts
+            end
+        end)
+    end
+})
+
+
+
 FarmTab:CreateLabel("Cooking Event")
 
 local autoSubmit = false
@@ -160,6 +196,8 @@ task.spawn(function()
         task.wait(0.5)
     end
 end)
+
+
 
 -- Shop Tab
 local seedShopList = {
