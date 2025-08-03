@@ -112,7 +112,7 @@ rayParams.FilterDescendantsInstances = {Workspace:WaitForChild("Dirt_VFX")}
 getgenv().AutoPlant = false
 
 FarmTab:CreateToggle({
-	Name = "Auto Plant at Humanoid Position",
+	Name = "Auto Plant at Humanoid Position (Debug)",
 	CurrentValue = false,
 	Callback = function(enabled)
 		getgenv().AutoPlant = enabled
@@ -120,26 +120,37 @@ FarmTab:CreateToggle({
 		task.spawn(function()
 			while getgenv().AutoPlant do
 				local char = LocalPlayer.Character
-				if not (char and char:FindFirstChild("HumanoidRootPart")) then task.wait(1) continue end
+				local hrp = char and char:FindFirstChild("HumanoidRootPart")
+				local tool = char and char:FindFirstChildWhichIsA("Tool")
 
-				local hrp = char:FindFirstChild("HumanoidRootPart")
-				local tool = char:FindFirstChildWhichIsA("Tool")
-
-				if tool and tool.Name:find("Seed") and tool:GetAttribute("Quantity") > 0 then
+				if hrp and tool then
 					local origin = hrp.Position + Vector3.new(0, 3, 0)
 					local direction = Vector3.new(0, -10, 0)
 					local result = Workspace:Raycast(origin, direction, rayParams)
 
-					if result and result.Instance and result.Instance.Name == "Can_Plant" then
-						local grandParent = result.Instance:FindFirstAncestorWhichIsA("Model")
-						if grandParent and grandParent:FindFirstChild("Data") and grandParent.Data:FindFirstChild("Owner") then
-							if grandParent.Data.Owner.Value == LocalPlayer.Name then
+					if result then
+						print("🌱 Hit part:", result.Instance:GetFullName())
+						if result.Instance.Name == "Can_Plant" then
+							local parentModel = result.Instance:FindFirstAncestorWhichIsA("Model")
+							local isOwned = parentModel and parentModel:FindFirstChild("Data") and parentModel.Data:FindFirstChild("Owner") and parentModel.Data.Owner.Value == LocalPlayer.Name
+
+							if isOwned then
 								local seedName = tool:GetAttribute("Seed") or tool.Name:match("^(.-) %b[]") or tool.Name
+								print("✅ Planting", seedName, "at", result.Position)
 								Plant_RE:FireServer(result.Position, seedName)
+							else
+								print("⛔ Tile is not owned by player")
 							end
+						else
+							print("❌ Hit part is not Can_Plant")
 						end
+					else
+						print("❌ Nothing under character to plant on")
 					end
+				else
+					print("⛔ Missing tool or HRP")
 				end
+
 				task.wait(1)
 			end
 		end)
