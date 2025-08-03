@@ -173,7 +173,7 @@ end)
 
 
 --MISC TAB🌟
-Tab:CreateButton({
+MiscTab:CreateButton({
     Name = "Rejoin Server",
     Callback = function()
         local TeleportService = game:GetService("TeleportService")
@@ -194,12 +194,12 @@ local LocalPlayer = Players.LocalPlayer
 local currentJobId = game.JobId or "Unavailable"
 
 -- UI Elements
-Tab:CreateParagraph({
+MiscTab:CreateParagraph({
     Title = "Your JobId",
     Content = currentJobId
 })
 
-Tab:CreateButton({
+MiscTab:CreateButton({
     Name = " Copy JobId to Clipboard",
     Callback = function()
         if setclipboard then
@@ -211,7 +211,7 @@ Tab:CreateButton({
     end
 })
 
-Tab:CreateInput({
+MiscTab:CreateInput({
     Name = " Enter JobId to Join",
     PlaceholderText = "Paste JobId here...",
     RemoveTextAfterFocusLost = false,
@@ -224,7 +224,7 @@ Tab:CreateInput({
     end
 })
 
-Tab:CreateButton({
+MiscTab:CreateButton({
     Name = " Server Hop",
     Callback = function()
         local url = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
