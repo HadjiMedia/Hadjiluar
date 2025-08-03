@@ -107,39 +107,43 @@ local Plant_RE = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Plan
 
 local rayParams = RaycastParams.new()
 rayParams.FilterType = Enum.RaycastFilterType.Exclude
-rayParams.FilterDescendantsInstances = {Workspace.Dirt_VFX}
+rayParams.FilterDescendantsInstances = {Workspace:WaitForChild("Dirt_VFX")}
 
 getgenv().AutoPlant = false
 
--- 🌿 Rayfield Toggle Button (Auto Plant at Humanoid Position)
 FarmTab:CreateToggle({
-	Name = "Auto Plant Seeds (Humanoid)",
+	Name = "Auto Plant at Humanoid Position",
 	CurrentValue = false,
-	Callback = function(state)
-		getgenv().AutoPlant = state
+	Callback = function(enabled)
+		getgenv().AutoPlant = enabled
 
 		task.spawn(function()
 			while getgenv().AutoPlant do
 				local char = LocalPlayer.Character
-				local hrp = char and char:FindFirstChild("HumanoidRootPart")
-				local tool = char and char:FindFirstChildOfClass("Tool")
+				if not (char and char:FindFirstChild("HumanoidRootPart")) then task.wait(1) continue end
 
-				if hrp and tool and tool.Name:find("Seed") and tool:GetAttribute("Quantity") > 0 then
-					-- Raycast straight down from HumanoidRootPart
-					local result = Workspace:Raycast(hrp.Position, Vector3.new(0, -10, 0), rayParams)
+				local hrp = char:FindFirstChild("HumanoidRootPart")
+				local tool = char:FindFirstChildWhichIsA("Tool")
+
+				if tool and tool.Name:find("Seed") and tool:GetAttribute("Quantity") > 0 then
+					local origin = hrp.Position + Vector3.new(0, 3, 0)
+					local direction = Vector3.new(0, -10, 0)
+					local result = Workspace:Raycast(origin, direction, rayParams)
 
 					if result and result.Instance and result.Instance.Name == "Can_Plant" then
-						local owner = result.Instance.Parent and result.Instance.Parent.Parent:FindFirstChild("Data")
-						if owner and owner:FindFirstChild("Owner") and owner.Owner.Value == LocalPlayer.Name then
-							local seedName = tool:GetAttribute("Seed") or tool.Name:match("^(.-) %b[]") or tool.Name
-							Plant_RE:FireServer(result.Position, seedName)
+						local grandParent = result.Instance:FindFirstAncestorWhichIsA("Model")
+						if grandParent and grandParent:FindFirstChild("Data") and grandParent.Data:FindFirstChild("Owner") then
+							if grandParent.Data.Owner.Value == LocalPlayer.Name then
+								local seedName = tool:GetAttribute("Seed") or tool.Name:match("^(.-) %b[]") or tool.Name
+								Plant_RE:FireServer(result.Position, seedName)
+							end
 						end
 					end
 				end
 				task.wait(1)
 			end
 		end)
-	end,
+	end
 })
 
 FarmTab:CreateLabel("Cooking Event")
