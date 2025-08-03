@@ -98,30 +98,46 @@ end)
 -- 🌿 FARM AUTOMATION
 FarmTab:CreateLabel("Automatic Service")
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Players = game:GetService("Players")
+local Workspace = game:GetService("Workspace")
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+
+local LocalPlayer = Players.LocalPlayer
+local Camera = Workspace.CurrentCamera
+local Plant_RE = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Plant_RE")
+
+local rayParams = RaycastParams.new()
+rayParams.FilterType = Enum.RaycastFilterType.Exclude
+rayParams.FilterDescendantsInstances = {Workspace.Dirt_VFX}
+
+getgenv().AutoPlant = false
+
+-- 🌿 Rayfield Toggle Button (Auto Plant)
 FarmTab:CreateToggle({
-	Name = "Auto Plant Held Seed",
+	Name = "Auto Plant Seeds",
 	CurrentValue = false,
-	Callback = function(Value)
-		getgenv().AutoPlant = Value
+	Callback = function(state)
+		getgenv().AutoPlant = state
 
 		task.spawn(function()
 			while getgenv().AutoPlant do
-				local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-				local root = char:FindFirstChild("HumanoidRootPart")
-				local heldTool = char:FindFirstChildWhichIsA("Tool")
+				local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool")
+				if tool and tool.Name:find("Seed") and tool:GetAttribute("Quantity") > 0 then
+					local mousePos = UserInputService:GetMouseLocation()
+					local ray = Camera:ViewportPointToRay(mousePos.X, mousePos.Y)
+					local result = Workspace:Raycast(ray.Origin, ray.Direction * 100, rayParams)
 
-				if root and heldTool then
-					-- Extract the base name from the tool (e.g., "Carrot Seed [X2121]" ➜ "Carrot")
-					local baseName = heldTool.Name:match("^(.-) Seed")
-
-					if baseName then
-						local position = root.Position
-						pcall(function()
-							ReplicatedStorage.GameEvents.Plant_RE:FireServer(position, baseName)
-						end)
+					if result and result.Instance and result.Instance.Name == "Can_Plant" then
+						local owner = result.Instance.Parent and result.Instance.Parent.Parent:FindFirstChild("Data")
+						if owner and owner:FindFirstChild("Owner") and owner.Owner.Value == LocalPlayer.Name then
+							local seedName = tool:GetAttribute("Seed") or tool.Name:match("^(.-) %b[]") or tool.Name
+							Plant_RE:FireServer(result.Position, seedName)
+						end
 					end
 				end
-				task.wait(1.5)
+				task.wait(1)
 			end
 		end)
 	end,
