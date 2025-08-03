@@ -1,8 +1,8 @@
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-    Name = "Grow a Garden Script",
-    LoadingTitle = "Grow a Garden Script",
+    Name = "🌿Grow a Garden Script - Hadjj☘️",
+    LoadingTitle = "🍃Grow a Garden Script🌱",
     LoadingSubtitle = "by Hadji",
     Theme = "Default",
     ToggleUIKeybind = Enum.KeyCode.K,
