@@ -9,6 +9,7 @@ local Window = Rayfield:CreateWindow({
 
     ConfigurationSaving = {
         Enabled = true,
+        FolderName = nil, -- Optional: set to a string to store config in subfolder
         FileName = "GAG"
     },
 
