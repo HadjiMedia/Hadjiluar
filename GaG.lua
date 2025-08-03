@@ -1,39 +1,27 @@
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "👨🏿‍🌾 Grow a Garden Script 👩🏻‍🌾",
-   Icon = 0,
-   LoadingTitle = "🌱 Grow a Garden Script 🌿",
-   LoadingSubtitle = "by Hadji",
-   ShowText = "Rayfield",
-   Theme = "Default",
-   ToggleUIKeybind = "K",
+    Name = "👨🏿‍🌾 Grow a Garden Script 👩🏻‍🌾",
+    LoadingTitle = "🌱 Grow a Garden Script 🌿",
+    LoadingSubtitle = "by Hadji",
+    Theme = "Default",
+    ToggleUIKeybind = Enum.KeyCode.K,
 
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false,
+    ConfigurationSaving = {
+        Enabled = true,
+        FileName = "GAG"
+    },
 
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = nil,
-      FileName = "GAG"
-   },
-
-   Discord = {
-      Enabled = false,
-      Invite = "Hadji",
-      RememberJoins = true
-   },
-
-   KeySystem = true,
-   KeySettings = {
-      Title = "Grow a Garden | Key",
-      Subtitle = "Key System",
-      Note = "Join the Discord Server to get the key",
-      FileName = "Key",
-      SaveKey = true,
-      GrabKeyFromSite = true,
-      Key = {"https://pastebin.com/raw/GpkZHNdm"} -- Correct way to list key link
-   }
+    KeySystem = true,
+    KeySettings = {
+        Title = "Grow a Garden | Key",
+        Subtitle = "Key System",
+        Note = "Join the Discord Server to get the key",
+        FileName = "Key",
+        SaveKey = true,
+        GrabKeyFromSite = true,
+        Key = {"https://pastebin.com/raw/GpkZHNdm"}
+    }
 })
 
 -- Tabs
@@ -42,9 +30,7 @@ local ShopTab = Window:CreateTab("Shop", nil)
 local PlayerTab = Window:CreateTab("Local Player", nil)
 local MiscTab = Window:CreateTab("Misc", nil)
 
-
---MISC TAB‼️
--- 🔄 Infinite Jump (Toggle)
+-- 🌟 PLAYER TAB
 PlayerTab:CreateToggle({
     Name = "Infinite Jump",
     CurrentValue = false,
@@ -68,83 +54,43 @@ PlayerTab:CreateToggle({
     end,
 })
 
-
-
---FARM TAB‼️
+-- 🌟 FARM TAB
 FarmTab:CreateLabel("Cooking Event")
--- 🔧 Auto Submit Cook
+
+-- Auto Submit
 local autoSubmit = false
-
-local Toggle = FarmTab:CreateToggle({
-   Name = "Auto Submit Held Plant",
-   CurrentValue = false,
-   Flag = "AutoSubmitToggle", -- Unique identifier for config saving
-   Callback = function(Value)
-       autoSubmit = Value
-   end,
+FarmTab:CreateToggle({
+    Name = "Auto Submit Held Plant",
+    CurrentValue = false,
+    Flag = "AutoSubmitToggle",
+    Callback = function(Value)
+        autoSubmit = Value
+    end,
 })
 
-task.spawn(function()
-    while true do
-        if autoSubmit then
-            pcall(function()
-                local args = { "SubmitHeldPlant" }
-                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CookingPotService_RE"):FireServer(unpack(args))
-            end)
-        end
-        task.wait(0.5)
-    end
-end)
-
---Auto Cook
+-- Auto Cook
 local autoCook = false
-
-local Toggle = FarmTab:CreateToggle({
-   Name = "Auto Cook Pot",
-   CurrentValue = false,
-   Flag = "AutoCookToggle", -- Unique identifier for config saving
-   Callback = function(Value)
-       autoCook = Value
-   end,
+FarmTab:CreateToggle({
+    Name = "Auto Cook Pot",
+    CurrentValue = false,
+    Flag = "AutoCookToggle",
+    Callback = function(Value)
+        autoCook = Value
+    end,
 })
 
-task.spawn(function()
-    while true do
-        if autoCook then
-            pcall(function()
-                local args = { "CookBest" }
-                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("CookingPotService_RE"):FireServer(unpack(args))
-            end)
-        end
-        task.wait(0.5)
-    end
-end)
-
---Auto Submit Food to Pig
+-- Auto Submit to Pig
 local autoSubmitP = false
-
-local Toggle = FarmTab:CreateToggle({
-   Name = "Auto Submit Held Food to Chris P.",
-   CurrentValue = false,
-   Flag = "AutoSubmitPToggle", -- Unique identifier for config saving
-   Callback = function(Value)
-       autoSubmitP = Value
-   end,
+FarmTab:CreateToggle({
+    Name = "Auto Submit Held Food to Chris P.",
+    CurrentValue = false,
+    Flag = "AutoSubmitPToggle",
+    Callback = function(Value)
+        autoSubmitP = Value
+    end,
 })
 
-task.spawn(function()
-    while true do
-        if autoSubmitP then
-            pcall(function()
-                local args = { "SubmitHeldFood" }
-                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("SubmitFoodService_RE"):FireServer(unpack(args))
-            end)
-        end
-        task.wait(0.5)
-    end
-end)
-
---Empty Recipe
+-- Empty Pot Button
 FarmTab:CreateButton({
     Name = "Empty Cooking Pot",
     Callback = function()
@@ -152,18 +98,37 @@ FarmTab:CreateButton({
     end,
 })
 
+-- Background Farming Loops
+task.spawn(function()
+    while true do
+        if autoSubmit then
+            pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents")
+                    :WaitForChild("CookingPotService_RE"):FireServer("SubmitHeldPlant")
+            end)
+        end
+        if autoCook then
+            pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents")
+                    :WaitForChild("CookingPotService_RE"):FireServer("CookBest")
+            end)
+        end
+        if autoSubmitP then
+            pcall(function()
+                game:GetService("ReplicatedStorage"):WaitForChild("GameEvents")
+                    :WaitForChild("SubmitFoodService_RE"):FireServer("SubmitHeldFood")
+            end)
+        end
+        task.wait(0.5)
+    end
+end)
 
-
---SHOP TAB‼️
-
--- ✅ Only seed shop seeds
+-- 🌟 SHOP TAB
 local seedShopList = {
-    "Carrot", "Strawberry", "Blueberry", "Orange Tulip",
-    "Tomato", "Daffodil", "Cauliflower", "Raspberry",
-    "Watermelon", "Pumpkin", "Apple", "Bamboo", "Avocado",
-    "Banana", "Pineapple", "Coconut", "Cactus", "Dragon Fruit",
-    "Mango", "Grape", "Mushroom", "Pepper", "Cacao", "Beanstalk",
-    "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry"
+    "Carrot", "Strawberry", "Blueberry", "Orange Tulip", "Tomato", "Daffodil", "Cauliflower", "Raspberry",
+    "Watermelon", "Pumpkin", "Apple", "Bamboo", "Avocado", "Banana", "Pineapple", "Coconut", "Cactus", "Dragon Fruit",
+    "Mango", "Grape", "Mushroom", "Pepper", "Cacao", "Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud",
+    "Giant Pinecone", "Elder Strawberry"
 }
 
 local selectedSeeds = {}
@@ -173,36 +138,35 @@ ShopTab:CreateLabel("🌱 Multi-select seeds to buy")
 ShopTab:CreateDropdown({
     Name = "Seed List",
     Options = seedShopList,
-    MultipleOptions = true,
+    MultiSelection = true, -- ✅ CORRECT
+    Default = {},
     Callback = function(values)
         selectedSeeds = values
-    end
+    end,
 })
 
+-- Auto Buy Toggle
 local autoBuyS = false
-
-local Toggle = ShopTab:CreateToggle({
-   Name = "✅ Auto Buy Selected Seeds",
-   CurrentValue = false,
-   Flag = "AutoBuyToggle",
-   Callback = function(Value)
-       autoBuyS = Value
-   end,
+ShopTab:CreateToggle({
+    Name = "✅ Auto Buy Selected Seeds",
+    CurrentValue = false,
+    Flag = "AutoBuyToggle",
+    Callback = function(Value)
+        autoBuyS = Value
+    end,
 })
 
 task.spawn(function()
     while true do
-        if autoBuyS then
+        if autoBuyS and #selectedSeeds > 0 then
             for _, seedName in ipairs(selectedSeeds) do
-                local args = { seedName }
                 pcall(function()
                     game:GetService("ReplicatedStorage"):WaitForChild("GameEvents")
-                        :WaitForChild("BuySeedStock"):FireServer(unpack(args))
-                    print("Buying:", seedName)
+                        :WaitForChild("BuySeedStock"):FireServer(seedName)
                 end)
                 task.wait(0.25)
             end
         end
-        task.wait(1) -- Wait before next auto-buy cycle
+        task.wait(1)
     end
 end)
