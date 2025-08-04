@@ -281,6 +281,47 @@ task.spawn(function()
 	end
 end)
 
+local eggShopList = {
+	"Common Egg", "Common Summer Egg", "Rare Summer Egg", "Mythical Egg", "Paradise Egg", "Bug Egg"
+}
+
+local selectedegg = {}
+
+ShopTab:CreateLabel("Multi-select eggs to buy")
+
+ShopTab:CreateDropdown({
+	Name = "Egg Shop List",
+	Options = eggShopList,
+	MultipleOptions = true,
+	Default = {},
+	Callback = function(values)
+		selectedEggs = values
+	end,
+})
+
+local autoBuyG = false
+
+ShopTab:CreateToggle({
+	Name = "Auto Buy Selected Eggs",
+	CurrentValue = false,
+	Callback = function(Value)
+		autoBuyE = Value
+	end,
+})
+
+task.spawn(function()
+	while task.wait(1) do
+		if autoBuyE and #selectedEggs > 0 then
+			for _, seed in ipairs(selectedEggs) do
+				pcall(function()
+					ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(egg)
+				end)
+				task.wait(0.3)
+			end
+		end
+	end
+end)
+
 -- 🔧 MISC UTILITIES
 MiscTab:CreateButton({
 	Name = "Rejoin Server",
