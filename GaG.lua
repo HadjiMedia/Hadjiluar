@@ -152,8 +152,8 @@ local function teleportTo(cframe)
 end
 
 TpTab:CreateButton({ Name = "Seed Shop", Callback = function() teleportTo(CFrame.new(86.581, 3, -27.003)) end })
-TpTab:CreateButton({ Name = "Sell Stuff", Callback = function() teleportTo(CFrame.new(86.581, 3, 27.003)) end })
-TpTab:CreateButton({ Name = "Gear Shop", Callback = function() teleportTo(CFrame.new(-285.412, 3, 1813.977)) end })
+TpTab:CreateButton({ Name = "Sell Stuff", Callback = function() teleportTo(CFrame.new(86.585, 3, 0.427)) end })
+TpTab:CreateButton({ Name = "Gear Shop", Callback = function() teleportTo(CFrame.new(-284.945, 3, -13.171)) end })
 TpTab:CreateButton({ Name = "Pet/Egg Shop", Callback = function() teleportTo(CFrame.new(-283.833, 3, -1.397)) end })
 TpTab:CreateButton({ Name = "Cosmetics Shop", Callback = function() teleportTo(CFrame.new(-283.216, 3, -25.605)) end })
 TpTab:CreateButton({ Name = "Event", Callback = function() teleportTo(CFrame.new(-103.816, 4.4, -6.888)) end })
