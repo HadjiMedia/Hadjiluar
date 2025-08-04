@@ -34,6 +34,7 @@ local LocalPlayer = Players.LocalPlayer
 local FarmTab = Window:CreateTab("Auto Farm")
 local ShopTab = Window:CreateTab("Shop")
 local PlayerTab = Window:CreateTab("Local Player")
+local TpTab = Window:CreateTab("Teleport Location")
 local MiscTab = Window:CreateTab("Misc")
 
 -- 🌟 PLAYER UTILITIES
@@ -281,11 +282,13 @@ task.spawn(function()
 	end
 end)
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 local eggShopList = {
 	"Common Egg", "Common Summer Egg", "Rare Summer Egg", "Mythical Egg", "Paradise Egg", "Bug Egg"
 }
 
-local selectedegg = {}
+local selectedEggs = {} -- corrected variable name
 
 ShopTab:CreateLabel("Multi-select eggs to buy")
 
@@ -299,7 +302,7 @@ ShopTab:CreateDropdown({
 	end,
 })
 
-local autoBuyG = false
+local autoBuyE = false -- renamed properly
 
 ShopTab:CreateToggle({
 	Name = "Auto Buy Selected Eggs",
@@ -312,7 +315,7 @@ ShopTab:CreateToggle({
 task.spawn(function()
 	while task.wait(1) do
 		if autoBuyE and #selectedEggs > 0 then
-			for _, seed in ipairs(selectedEggs) do
+			for _, egg in ipairs(selectedEggs) do
 				pcall(function()
 					ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(egg)
 				end)
