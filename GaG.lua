@@ -267,51 +267,52 @@ end)
 
 --📍TELEPORT UTILITIES 
 TpTab:CreateLabel("Tap a button to teleport")
+
 TpTab:CreateButton({
     Name = "Seed Shop",
     Callback = function()
-        local position = Vector3.new(86.58995056152344, 2.999999761581421, -27.003969192504883) -- replace with your target position
-        game:GetService("ReplicatedStorage").GameEvents.TeleportPlayer:FireServer(position)
+        local position = Vector3.new(86.58995056152344, 2.999999761581421, -27.003969192504883)
+        ReplicatedStorage.GameEvents.TeleportPlayer:FireServer(position)
     end,
 })
 
 TpTab:CreateButton({
     Name = "Sell Stuff",
     Callback = function()
-        local position = Vector3.new(86.57794952392578, 2.999999761581421, 0.4267956614494324) -- replace with your target position
-        game:GetService("ReplicatedStorage").GameEvents.TeleportPlayer:FireServer(position)
+        local position = Vector3.new(86.57794952392578, 2.999999761581421, 0.4267956614494324)
+        ReplicatedStorage.GameEvents.TeleportPlayer:FireServer(position)
     end,
 })
 
 TpTab:CreateButton({
     Name = "Gear Shop",
     Callback = function()
-        local position = Vector3.new(-285.40802001953125, 2.999999761581421, -13.9779052734375) -- replace with your target position
-        game:GetService("ReplicatedStorage").GameEvents.TeleportPlayer:FireServer(position)
+        local position = Vector3.new(-285.40802001953125, 2.999999761581421, -13.9779052734375)
+        ReplicatedStorage.GameEvents.TeleportPlayer:FireServer(position)
     end,
-}
+})
 
 TpTab:CreateButton({
     Name = "Pet/Egg Shop",
     Callback = function()
-        local position = Vector3.new(-285.3355712890625, 2.999999761581421, -1.7066423892974854) -- replace with your target position
-        game:GetService("ReplicatedStorage").GameEvents.TeleportPlayer:FireServer(position)
+        local position = Vector3.new(-285.3355712890625, 2.999999761581421, -1.7066423892974854)
+        ReplicatedStorage.GameEvents.TeleportPlayer:FireServer(position)
     end,
 })
 
 TpTab:CreateButton({
     Name = "Cosmetics Shop",
     Callback = function()
-        local position = Vector3.new(-284.695068359375, 2.999999761581421, -25.885393142700195strich) -- replace with your target position
-        game:GetService("ReplicatedStorage").GameEvents.TeleportPlayer:FireServer(position)
+        local position = Vector3.new(-284.695068359375, 2.999999761581421, -25.885393142700195)
+        ReplicatedStorage.GameEvents.TeleportPlayer:FireServer(position)
     end,
 })
 
 TpTab:CreateButton({
     Name = "Event",
     Callback = function()
-        local position = Vector3.new(-103.05644989013672, 4.3999834060668945, -7.719189643859863KC]) -- replace with your target position
-        game:GetService("ReplicatedStorage").GameEvents.TeleportPlayer:FireServer(position)
+        local position = Vector3.new(-103.05644989013672, 4.3999834060668945, -7.719189643859863)
+        ReplicatedStorage.GameEvents.TeleportPlayer:FireServer(position)
     end,
 })
 
