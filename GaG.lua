@@ -300,12 +300,12 @@ TpTab:CreateButton({
     end,
 })
 
-TpTab:CreateButton({
-    Name = "Cosmetics Shop",
-    Callback = function()
-        local position = Vector3.new(-284.695068359375, 2.999999761581421, -25.885393142700195)
+local Button = TpTab:CreateButton({
+   Name = "Cosmetics Shop",
+   Callback = function()
+   local position = Vector3.new(-284.695068359375, 2.999999761581421, -25.885393142700195)
         ReplicatedStorage.GameEvents.TeleportPlayer:FireServer(position)
-    end,
+   end,
 })
 
 TpTab:CreateButton({
