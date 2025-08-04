@@ -273,48 +273,72 @@ TpTab:CreateLabel("Tap a button to teleport")
 TpTab:CreateButton({
     Name = "Seed Shop",
     Callback = function()
-        local position = Vector3.new(86.58995056152344, 2.999999761581421, -27.003969192504883)
-ReplicatedStorage.GameEvents.TeleportToPosition:FireServer(position)
+        local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- Set CFrame to the desired position
+hrp.CFrame = CFrame.new(86.58827209472656, 2.999999761581421, 27.003969192504883)
     end,
 })
 
 TpTab:CreateButton({
     Name = "Sell Stuff",
     Callback = function()
-        local position = Vector3.new(86.57794952392578, 2.999999761581421, 0.4267956614494324)
-ReplicatedStorage.GameEvents.TeleportToPosition:FireServer(position)
+        local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- Set CFrame to the desired position
+hrp.CFrame = CFrame.new(86.58129119873047, 2.999999761581421, -27.00398826599121)
     end,
 })
 
 TpTab:CreateButton({
     Name = "Gear Shop",
     Callback = function()
-        local position = Vector3.new(-285.40802001953125, 2.999999761581421, -13.9779052734375)
-ReplicatedStorage.GameEvents.TeleportToPosition:FireServer(position)
+        local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- Set CFrame to the desired position
+hrp.CFrame = CFrame.new(24.083829879760742, 2.999999761581421, -34.22563934326172)
     end,
 })
 
 TpTab:CreateButton({
     Name = "Pet/Egg Shop",
     Callback = function()
-        local position = Vector3.new(-285.3355712890625, 2.999999761581421, -1.7066423892974854)
-ReplicatedStorage.GameEvents.TeleportToPosition:FireServer(position)
+        local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- Set CFrame to the desired position
+hrp.CFrame = CFrame.new(24.083829879760742, 2.999999761581421, -34.22563934326172)
     end,
 })
 
 TpTab:CreateButton({
    Name = "Cosmetics Shop",
    Callback = function()
-        local position = Vector3.new(-284.695068359375, 2.999999761581421, -25.885393142700195)
-ReplicatedStorage.GameEvents.TeleportToPosition:FireServer(position)
+        local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- Set CFrame to the desired position
+hrp.CFrame = CFrame.new(-283.21600341796875, 2.999999761581421, -25.604568481445312)
    end,
 })
 
 TpTab:CreateButton({
     Name = "Event",
     Callback = function()
-        local position = Vector3.new(-103.05644989013672, 4.3999834060668945, -7.719189643859863)
-ReplicatedStorage.GameEvents.TeleportToPosition:FireServer(position)
+        local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+
+-- Set CFrame to the desired position
+hrp.CFrame = CFrame.new(-103.81616973876953, 4.3998918533325195, -6.888452529907227)
     end,
 })
 
