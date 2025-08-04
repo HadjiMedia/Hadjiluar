@@ -96,67 +96,7 @@ RunService.Stepped:Connect(function()
 	end
 end)
 
--- 🌿 FARM AUTOMATION
-FarmTab:CreateLabel("Automatic Service")
-
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local Players = game:GetService("Players")
-local Workspace = game:GetService("Workspace")
-
-local LocalPlayer = Players.LocalPlayer
-local Plant_RE = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("Plant_RE")
-
-local rayParams = RaycastParams.new()
-rayParams.FilterType = Enum.RaycastFilterType.Exclude
-rayParams.FilterDescendantsInstances = {Workspace:WaitForChild("Dirt_VFX")}
-
-getgenv().AutoPlant = false
-
-FarmTab:CreateToggle({
-	Name = "Auto Plant at Humanoid Position (Debug)",
-	CurrentValue = false,
-	Callback = function(enabled)
-		getgenv().AutoPlant = enabled
-
-		task.spawn(function()
-			while getgenv().AutoPlant do
-				local char = LocalPlayer.Character
-				local hrp = char and char:FindFirstChild("HumanoidRootPart")
-				local tool = char and char:FindFirstChildWhichIsA("Tool")
-
-				if hrp and tool then
-					local origin = hrp.Position + Vector3.new(0, 3, 0)
-					local direction = Vector3.new(0, -10, 0)
-					local result = Workspace:Raycast(origin, direction, rayParams)
-
-					if result then
-						print("🌱 Hit part:", result.Instance:GetFullName())
-						if result.Instance.Name == "Can_Plant" then
-							local parentModel = result.Instance:FindFirstAncestorWhichIsA("Model")
-							local isOwned = parentModel and parentModel:FindFirstChild("Data") and parentModel.Data:FindFirstChild("Owner") and parentModel.Data.Owner.Value == LocalPlayer.Name
-
-							if isOwned then
-								local seedName = tool:GetAttribute("Seed") or tool.Name:match("^(.-) %b[]") or tool.Name
-								print("✅ Planting", seedName, "at", result.Position)
-								Plant_RE:FireServer(result.Position, seedName)
-							else
-								print("⛔ Tile is not owned by player")
-							end
-						else
-							print("❌ Hit part is not Can_Plant")
-						end
-					else
-						print("❌ Nothing under character to plant on")
-					end
-				else
-					print("⛔ Missing tool or HRP")
-				end
-
-				task.wait(1)
-			end
-		end)
-	end
-})
+--FARM AUTOMATION
 
 FarmTab:CreateLabel("Cooking Event")
 
