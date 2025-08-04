@@ -290,7 +290,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 local hrp = character:WaitForChild("HumanoidRootPart")
 
 -- Set CFrame to the desired position
-hrp.CFrame = CFrame.new(86.58129119873047, 2.9999997615814210 27.00398826599121)
+hrp.CFrame = CFrame.new(86.58129119873047, 2.9999997615814210, 27.00398826599121)
     end,
 })
 
