@@ -266,6 +266,8 @@ task.spawn(function()
 end)
 
 --📍TELEPORT UTILITIES 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
 TpTab:CreateLabel("Tap a button to teleport")
 
 TpTab:CreateButton({
@@ -300,10 +302,10 @@ TpTab:CreateButton({
     end,
 })
 
-local Button = TpTab:CreateButton({
+TpTab:CreateButton({
    Name = "Cosmetics Shop",
    Callback = function()
-   local position = Vector3.new(-284.695068359375, 2.999999761581421, -25.885393142700195)
+        local position = Vector3.new(-284.695068359375, 2.999999761581421, -25.885393142700195)
         ReplicatedStorage.GameEvents.TeleportPlayer:FireServer(position)
    end,
 })
@@ -315,6 +317,7 @@ TpTab:CreateButton({
         ReplicatedStorage.GameEvents.TeleportPlayer:FireServer(position)
     end,
 })
+
 
 -- 🔧 MISC UTILITIES
 MiscTab:CreateButton({
