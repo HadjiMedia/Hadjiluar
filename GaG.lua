@@ -373,3 +373,47 @@ MiscTab:CreateButton({
 		end
 	end,
 })
+
+-- Auto load config on start
+Rayfield:LoadConfiguration()
+
+-- Save config
+MiscTab:CreateButton({
+    Name = "Save Config",
+    Callback = function()
+        Rayfield:SaveConfiguration()
+    end
+})
+
+-- Load config
+MiscTab:CreateButton({
+    Name = "Load Config",
+    Callback = function()
+        Rayfield:LoadConfiguration()
+    end
+})
+
+-- Create new config
+MiscTab:CreateInput({
+    Name = "Create Config",
+    PlaceholderText = "Enter config name",
+    RemoveTextAfterFocusLost = true,
+    Callback = function(name)
+        Rayfield:SetConfigurationName(name)
+        Rayfield:SaveConfiguration()
+    end
+})
+
+-- Delete config (manual)
+MiscTab:CreateInput({
+    Name = "Delete Config (Manual)",
+    PlaceholderText = "Delete via folder",
+    RemoveTextAfterFocusLost = false,
+    Callback = function()
+        Rayfield:Notify({
+            Title = "Notice",
+            Content = "Please delete config files manually in workspace folder.",
+            Duration = 5
+        })
+    end
+})
