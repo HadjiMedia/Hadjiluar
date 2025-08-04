@@ -278,7 +278,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 local hrp = character:WaitForChild("HumanoidRootPart")
 
 -- Set CFrame to the desired position
-hrp.CFrame = CFrame.new(86.58827209472656, 2.999999761581421, 27.003969192504883)
+hrp.CFrame = CFrame.new(86.58129119873047, 2.999999761581421, -27.00398826599121)
     end,
 })
 
@@ -290,7 +290,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 local hrp = character:WaitForChild("HumanoidRootPart")
 
 -- Set CFrame to the desired position
-hrp.CFrame = CFrame.new(86.58129119873047, 2.999999761581421, -27.00398826599121)
+hrp.CFrame = CFrame.new(86.58129119873047, 2.9999997615814210 27.00398826599121)
     end,
 })
 
@@ -302,7 +302,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 local hrp = character:WaitForChild("HumanoidRootPart")
 
 -- Set CFrame to the desired position
-hrp.CFrame = CFrame.new(24.083829879760742, 2.999999761581421, -34.22563934326172)
+hrp.CFrame = CFrame.new(-285.412109375, 2.9999992847442627, 1813.977895736694336)
     end,
 })
 
@@ -314,7 +314,7 @@ local character = player.Character or player.CharacterAdded:Wait()
 local hrp = character:WaitForChild("HumanoidRootPart")
 
 -- Set CFrame to the desired position
-hrp.CFrame = CFrame.new(24.083829879760742, 2.999999761581421, -34.22563934326172)
+hrp.CFrame = CFrame.new(-283.83270263671875, 2.999999761581421, -1.3968961238861084)
     end,
 })
 
