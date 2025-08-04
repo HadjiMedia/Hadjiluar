@@ -326,7 +326,7 @@ task.spawn(function()
 end)
 
 --📍TELEPORT UTILITIES 
-ShopTab:CreateLabel("Tap a button to teleport")
+TpTab:CreateLabel("Tap a button to teleport")
 TpTab:CreateButton({
     Name = "Seed Shop",
     Callback = function()
