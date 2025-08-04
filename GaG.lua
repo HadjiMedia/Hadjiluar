@@ -237,6 +237,50 @@ task.spawn(function()
 	end
 end)
 
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local gearShopList = {
+	"Watering Can", "Trading Ticket", "Trowel", "Recall Wrench", "Basic Sprinkler", "Advance Sprinkler", "Medium Toy", "Medium Treat",
+	"Godly Sprinkler", "Magnifying Glass", "Master Sprinkler", "Cleaning Spray", "Favorite Tool", "Harvest Tool", "Friendship Pot", "Grandmaster Sprinkler", "Levelup Lollipop"
+}
+
+local selectedGears = {}
+
+ShopTab:CreateLabel("Multi-select gears to buy")
+
+ShopTab:CreateDropdown({
+	Name = "Gear List",
+	Options = gearShopList,
+	MultipleOptions = true,
+	Default = {},
+	Callback = function(values)
+		selectedGears = values
+	end,
+})
+
+local autoBuyG = false
+
+ShopTab:CreateToggle({
+	Name = "Auto Buy Selected Gears",
+	CurrentValue = false,
+	Callback = function(Value)
+		autoBuyG = Value
+	end,
+})
+
+task.spawn(function()
+	while task.wait(1) do
+		if autoBuyG and #selectedGears > 0 then
+			for _, gear in ipairs(selectedGears) do
+				pcall(function()
+					ReplicatedStorage.GameEvents.BuyGearStock:FireServer(gear)
+				end)
+				task.wait(0.3)
+			end
+		end
+	end
+end)
+
 -- 🔧 MISC UTILITIES
 MiscTab:CreateButton({
 	Name = "Rejoin Server",
