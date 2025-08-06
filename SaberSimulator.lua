@@ -44,6 +44,8 @@ local FarmTab = Window:CreateTab("Auto Farm", nil)
 local ShopTab = Window:CreateTab("Auto Buy", nil)
 local BossTab = Window:CreateTab("Auto Boss", nil)
 local EggTab = Window:CreateTab("Auto Egg/Pet", nil)
+local MiscTab = Window:CreateTab("Misc", nil)
+
 
 
 --FARM AUTOMATION⚔️
@@ -246,3 +248,252 @@ BossTab:CreateToggle({
 })
 
 --EGG AUTOMATION🥚
+local Label = EggTab:CreateLabel("Egg Automation", 4483362458, Color3.fromRGB(255, 255, 255), true) -- Title, Icon, Color, IgnoreTheme
+local selectedEgg = "Basic Egg" -- default egg
+local autoBuyEgg = false
+
+EggTab:CreateDropdown({
+    Name = "Select Egg",
+    Options = {
+        "Basic Egg"
+        "Wooden Egg",
+        "Spiky Egg",
+        "Frozen Egg",
+        "Golden Egg",
+        "Rainbow Egg",
+        "Void Egg",
+        "Mythical Egg",
+        "Heavenly Egg",
+        "Darkness Egg",
+        "Cyber Egg",
+        "Galaxy Egg",
+        "Shadow Egg"
+    },
+    CurrentOption = selectedEgg,
+    Callback = function(option)
+        selectedEgg = option
+    end,
+})
+
+EggTab:CreateToggle({
+    Name = "Auto Buy Selected Egg",
+    CurrentValue = false,
+    Callback = function(state)
+        autoBuyEgg = state
+        if autoBuyEgg then
+            task.spawn(function()
+                while autoBuyEgg do
+                    pcall(function()
+                        local args = {
+                            "BuyEgg",
+                            selectedEgg
+                        }
+                        game:GetService("ReplicatedStorage")
+                            :WaitForChild("Events")
+                            :WaitForChild("UIAction")
+                            :FireServer(unpack(args))
+                    end)
+                    task.wait(2) -- wait between egg buys (adjust if needed)
+                end
+            end)
+        end
+    end,
+})
+
+local Button = Tab:CreateButton({
+   Name = "Stop Auto Hacthing Egg(Test)",
+   Callback = function()
+   local args = {
+	"StopAutoHatching"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("UIAction"):FireServer(unpack(args))
+   end,
+})
+
+local autoSwitchEgg = false
+
+EggTab:CreateToggle({
+    Name = "Auto Switch Egg",
+    CurrentValue = false,
+    Callback = function(state)
+        autoSwitchEgg = state
+        if autoSwitchEgg then
+            -- Turn ON
+            local args = {
+                "ChangeSetting",
+                "AutoSwitchEgg"
+            }
+            game:GetService("ReplicatedStorage")
+                :WaitForChild("Events")
+                :WaitForChild("UIAction")
+                :FireServer(unpack(args))
+        else
+            -- Turn OFF
+            local args = {
+                "ChangeSetting",
+                "AutoSwitchEgg"
+            }
+            game:GetService("ReplicatedStorage")
+                :WaitForChild("Events")
+                :WaitForChild("UIAction")
+                :FireServer(unpack(args))
+        end
+    end,
+})
+
+local Label = EggTab:CreateLabel("Pet Automation", 4483362458, Color3.fromRGB(255, 255, 255), true) -- Title, Icon, Color, IgnoreTheme
+
+EggTab:CreateToggle({
+    Name = "Auto Equip Best Pets",
+    CurrentValue = false,
+    Callback = function(state)
+        autoEquipBest = state
+        if autoEquipBest then
+            task.spawn(function()
+                while autoEquipBest do
+                    pcall(function()
+                        local args = {
+                            "EquipBestPets"
+                        }
+                        game:GetService("ReplicatedStorage")
+                            :WaitForChild("Events")
+                            :WaitForChild("UIAction")
+                            :FireServer(unpack(args))
+                    end)
+                    task.wait(10)
+                end
+            end)
+        end
+    end,
+})
+
+local Button = EggTab:CreateButton({
+   Name = "Unequip All Pets",
+   Callback = function()
+   local args = {
+	"UnequipAllPets"
+}
+game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("UIAction"):FireServer(unpack(args))
+
+   end,
+})
+
+local autoCombinePets = false
+
+EggTab:CreateToggle({
+    Name = "Auto Combine/Craft Pets",
+    CurrentValue = false,
+    Callback = function(state)
+        autoCombinePets = state
+        if autoCombinePets then
+            task.spawn(function()
+                while autoCombinePets do
+                    pcall(function()
+                        local args = {
+                            "CombineAllPets"
+                        }
+                        game:GetService("ReplicatedStorage")
+                            :WaitForChild("Events")
+                            :WaitForChild("UIAction")
+                            :FireServer(unpack(args))
+                    end)
+                    task.wait(10)
+                end
+            end)
+        end
+    end,
+})
+
+--MISC UTILITIES 🔧
+MiscTab:CreateToggle({
+	Name = "Infinite Jump",
+	CurrentValue = false,
+	Callback = function(v) _G.infinjump = v end
+})
+
+game:GetService("UserInputService").JumpRequest:Connect(function()
+	if _G.infinjump then
+		local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+		if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping) end
+	end
+end)
+
+MiscTab:CreateSlider({
+	Name = "WalkSpeed",
+	Range = {16, 150},
+	Increment = 1,
+	CurrentValue = 16,
+	Callback = function(v)
+		local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+		if hum then hum.WalkSpeed = v end
+	end
+})
+
+MiscTab:CreateSlider({
+	Name = "JumpPower",
+	Range = {50, 200},
+	Increment = 5,
+	CurrentValue = 50,
+	Callback = function(v)
+		local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")
+		if hum then hum.JumpPower = v end
+	end
+})
+
+local noclip = false
+MiscTab:CreateToggle({
+	Name = "No Clip",
+	CurrentValue = false,
+	Callback = function(v) noclip = v end
+})
+
+RunService.Stepped:Connect(function()
+	if noclip and LocalPlayer.Character then
+		for _, part in ipairs(LocalPlayer.Character:GetDescendants()) do
+			if part:IsA("BasePart") and part.CanCollide then
+				part.CanCollide = false
+			end
+		end
+	end
+end)
+
+MiscTab:CreateButton({ Name = "Rejoin Server", Callback = function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end })
+
+local currentJobId = game.JobId or "Unavailable"
+MiscTab:CreateParagraph({ Title = "Your JobId", Content = currentJobId })
+
+MiscTab:CreateButton({
+	Name = "Copy JobId to Clipboard",
+	Callback = function()
+		if setclipboard then
+			setclipboard(currentJobId)
+			Rayfield:Notify({Title = "Copied", Content = "JobId copied to clipboard!", Duration = 3})
+		end
+	end
+})
+
+MiscTab:CreateInput({
+	Name = "Enter JobId to Join",
+	PlaceholderText = "Paste JobId here...",
+	Callback = function(jobId)
+		if jobId ~= "" then
+			TeleportService:TeleportToPlaceInstance(game.PlaceId, jobId, LocalPlayer)
+		end
+	end
+})
+
+MiscTab:CreateButton({
+	Name = "Server Hop",
+	Callback = function()
+		local url = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
+		local success, result = pcall(function() return HttpService:JSONDecode(game:HttpGet(url)) end)
+		if success and result and result.data then
+			for _, server in ipairs(result.data) do
+				if server.playing < server.maxPlayers and server.id ~= currentJobId then
+					TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
+					break
+				end
+			end
+		end
+	end
+})
