@@ -251,27 +251,37 @@ BossTab:CreateToggle({
 --// Variables
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local AutoHatchEnabled = false
-local SelectedEgg = "Common Egg"
+local SelectedEgg = "Basic Egg"
+
 local EggList = {
-    "Common Egg", "Grass Egg", "Desert Egg",
-    "Ice Egg", "Toxic Egg", "Fire Egg",
-    "Heavenly Egg", "Secret Egg"
+    "Basic Egg",
+    "Wooden Egg",
+    "Reinforced Egg",
+    "Ancient",
+    "Egg of life",
+    "Glory Egg",
+    "Dominus Egg",
+    "Silver Egg",
+    "Golden Egg",
+    "Premium Egg",
+    "Class Egg",
+    "Diamond Egg"
 }
 
 --// Auto Hatch Loop
 task.spawn(function()
     while task.wait(1) do
         if AutoHatchEnabled and SelectedEgg then
-            ReplicatedStorage.Remotes.HatchEgg:InvokeServer(SelectedEgg, 1) -- single hatch
+            ReplicatedStorage.Remotes.HatchEgg:InvokeServer(SelectedEgg, 1)
         end
     end
 end)
 
---// Rayfield UI Elements (Insert in your EggTab)
+--// Rayfield UI Elements (Drop inside EggTab)
 EggTab:CreateDropdown({
-    Name = "🥚 Select Egg to Hatch",
+    Name = "🥚 Select Egg to Hatch(Slide 1)",
     Options = EggList,
-    CurrentOption = "Common Egg",
+    CurrentOption = "Basic Egg",
     Callback = function(Option)
         SelectedEgg = Option
     end
@@ -284,8 +294,6 @@ EggTab:CreateToggle({
         AutoHatchEnabled = Value
     end
 })
-
-local Label = EggTab:CreateLabel("Pet Automation", 4483362458, Color3.fromRGB(255, 255, 255), true) -- Title, Icon, Color, IgnoreTheme
 
 EggTab:CreateToggle({
     Name = "Auto Equip Best Pets",
