@@ -248,97 +248,41 @@ BossTab:CreateToggle({
 })
 
 --EGG AUTOMATION🥚
-local Label = EggTab:CreateLabel("Egg Automation", 4483362458, Color3.fromRGB(255, 255, 255), true) -- Title, Icon, Color, IgnoreTheme
-local selectedEgg = "Basic Egg" -- default egg
-local autoBuyEgg = false
-
-EggTab:CreateDropdown({
-    Name = "Select Egg",
-    Options = {
-        "Basic Egg",
-        "Wooden Egg",
-        "Spiky Egg",
-        "Frozen Egg",
-        "Golden Egg",
-        "Rainbow Egg",
-        "Void Egg",
-        "Mythical Egg",
-        "Heavenly Egg",
-        "Darkness Egg",
-        "Cyber Egg",
-        "Galaxy Egg",
-        "Shadow Egg"
-    },
-    CurrentOption = selectedEgg,
-    Callback = function(option)
-        selectedEgg = option
-    end,
-})
-
-EggTab:CreateToggle({
-    Name = "Auto Buy Selected Egg",
-    CurrentValue = false,
-    Callback = function(state)
-        autoBuyEgg = state
-        if autoBuyEgg then
-            task.spawn(function()
-                while autoBuyEgg do
-                    pcall(function()
-                        local args = {
-                            "BuyEgg",
-                            selectedEgg
-                        }
-                        game:GetService("ReplicatedStorage")
-                            :WaitForChild("Events")
-                            :WaitForChild("UIAction")
-                            :FireServer(unpack(args))
-                    end)
-                    task.wait(2) -- wait between egg buys (adjust if needed)
-                end
-            end)
-        end
-    end,
-})
-
-local Button = Tab:CreateButton({
-   Name = "Stop Auto Hacthing Egg(Test)",
-   Callback = function()
-   local args = {
-        "StopAutoHatching"
+--// Variables
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local AutoHatchEnabled = false
+local SelectedEgg = "Common Egg"
+local EggList = {
+    "Common Egg", "Grass Egg", "Desert Egg",
+    "Ice Egg", "Toxic Egg", "Fire Egg",
+    "Heavenly Egg", "Secret Egg"
 }
-game:GetService("ReplicatedStorage"):WaitForChild("Events"):WaitForChild("UIAction"):FireServer(unpack(args))
-   end,
+
+--// Auto Hatch Loop
+task.spawn(function()
+    while task.wait(1) do
+        if AutoHatchEnabled and SelectedEgg then
+            ReplicatedStorage.Remotes.HatchEgg:InvokeServer(SelectedEgg, 1) -- single hatch
+        end
+    end
+end)
+
+--// Rayfield UI Elements (Insert in your EggTab)
+EggTab:CreateDropdown({
+    Name = "🥚 Select Egg to Hatch",
+    Options = EggList,
+    CurrentOption = "Common Egg",
+    Callback = function(Option)
+        SelectedEgg = Option
+    end
 })
 
-local autoSwitchEgg = false
-
 EggTab:CreateToggle({
-    Name = "Auto Switch Egg",
+    Name = "⚙️ Auto Hatch Egg",
     CurrentValue = false,
-    Callback = function(state)
-        autoSwitchEgg = state
-        if autoSwitchEgg then
-            -- Turn ON
-            local args = {
-                "ChangeSetting",
-                "AutoSwitchEgg"
-            }
-            game:GetService("ReplicatedStorage")
-                :WaitForChild("Events")
-                :WaitForChild("UIAction")
-                :FireServer(unpack(args))
-        else
-            -- Turn OFF
-            local args = {
-                "ChangeSetting",
-                "AutoSwitchEgg"
-            }
-            game:GetService("ReplicatedStorage")
-                :WaitForChild("Events")
-                :WaitForChild("UIAction")
-                :FireServer(unpack(args))
-        end
-    end,
+    Callback = function(Value)
+        AutoHatchEnabled = Value
+    end
 })
 
 local Label = EggTab:CreateLabel("Pet Automation", 4483362458, Color3.fromRGB(255, 255, 255), true) -- Title, Icon, Color, IgnoreTheme
