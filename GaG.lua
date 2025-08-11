@@ -185,11 +185,11 @@ FarmTab:CreateToggle({
 task.spawn(function()
     while task.wait(2) do
         if AutoEquipEnabled then
-            if GetHeldItemName() ~= TargetFruit1 then EquipFruit(TargetFruit1) end
-            if GetHeldItemName() ~= TargetFruit2 then EquipFruit(TargetFruit2) end
-            if GetHeldItemName() ~= TargetFruit3 then EquipFruit(TargetFruit3) end
-            if GetHeldItemName() ~= TargetFruit4 then EquipFruit(TargetFruit4) end
-            if GetHeldItemName() ~= TargetFruit5 then EquipFruit(TargetFruit5) end
+            if GetHeldItemName() ~= TargetFruit1 then EquipTool(TargetFruit1) end
+            if GetHeldItemName() ~= TargetFruit2 then EquipTool(TargetFruit2) end
+            if GetHeldItemName() ~= TargetFruit3 then EquipTool(TargetFruit3) end
+            if GetHeldItemName() ~= TargetFruit4 then EquipTool(TargetFruit4) end
+            if GetHeldItemName() ~= TargetFruit5 then EquipTool(TargetFruit5) end
         end
     end
 end)
