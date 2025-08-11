@@ -39,6 +39,33 @@ local PlayerTab = Window:CreateTab("Local Player")
 local TpTab = Window:CreateTab("Teleport Location")
 local MiscTab = Window:CreateTab("Misc")
 
+--// All Grow a Garden crops (alphabetical)
+local FruitList = {
+    "Aloe Vera", "Amber Spine", "Apple", "Artichoke", "Avocado",
+    "Badlands Pepper", "Bamboo", "Banana", "Beanstalk", "Bee Balm",
+    "Bell Pepper", "Bendboo", "Bitter Melon", "Blood Banana", "Blue Lollipop",
+    "Blueberry", "Bone Blossom", "Boneboo", "Broccoli", "Burning Bud",
+    "Butternut Squash", "Cacao", "Cactus", "Canary Melon", "Candy Blossom",
+    "Candy Sunflower", "Cantaloupe", "Carrot", "Cauliflower", "Celestiberry",
+    "Cherry Blossom", "Chocolate Carrot", "Coconut", "Cocovine", "Corn",
+    "Cranberry", "Crimson Vine", "Crocus", "Crown Melon", "Cursed Fruit",
+    "Daffodil", "Dandelion", "Delphinium", "Dezen", "Dragon Fruit",
+    "Dragon Pepper", "Dragon Sapling", "Durian", "Easter Egg", "Eggplant",
+    "Elder Strawberry", "Elephant Ears", "Ember Lily", "Enkaku",
+    "Feijoa", "Firefly Fern", "Firework Flower", "Fossilight", "Foxglove",
+    "Fruitball", "Giant Pinecone", "Glowshroom", "Grand Tomato", "Mushroom",
+    "Grape", "Rabbit Flower", "Hibiscus", "Hinomai", "Honeydew",
+    "Stardust", "Irish Clover", "Ivy Gourd", "Lemon", "Lime", "Lucky Bamboo",
+    "Magic Tulip", "Maple Apple", "Mango", "Monoblooma", "Moonlight Fruit",
+    "Onion", "Orange", "Orchid", "Peach", "Pear", "Pepper", "Pineapple",
+    "Plum", "Poisonberry", "Pomegranate", "Pumpkin", "Radish", "Rhubarb",
+    "Rose", "Sakura Bush", "Shadow Apple", "Sinisterdrip", "Snowflake Bloom",
+    "Sorbitree", "Spirit Petal", "Starfruit", "Strawberry", "Sugarglaze",
+    "Sunflower", "Sundew", "Sweet Apple", "Taco Fern", "Taro Flower",
+    "Tranquil Bloom", "Twisted Tangle", "Veinpetal", "Violet Corn",
+    "Watermelon", "Wildflower", "Yam", "Zucchini"
+}
+
 -- 🌟 PLAYER UTILITIES
 PlayerTab:CreateToggle({
 	Name = "Infinite Jump",
@@ -92,12 +119,87 @@ RunService.Stepped:Connect(function()
 	end
 end)
 
+-- Services
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+local Backpack = LocalPlayer:WaitForChild("Backpack")
+
+-- Target fruits (default first item from your FruitList)
+local TargetFruit1 = FruitList[1]
+local TargetFruit2 = FruitList[1]
+local TargetFruit3 = FruitList[1]
+local TargetFruit4 = FruitList[1]
+local TargetFruit5 = FruitList[1]
+
+-- Toggle state
+local AutoEquipEnabled = false
+
+-- Cooldown timer for auto cook
+local cookingCooldown = false
+
+-- Get held tool name
+local function GetHeldItemName()
+    local Character = LocalPlayer.Character
+    if not Character then return nil end
+    for _, item in pairs(Character:GetChildren()) do
+        if item:IsA("Tool") then
+            local cleanName = string.match(item.Name, "^(.-)%s*%[")
+            return cleanName or item.Name
+        end
+    end
+    return nil
+end
+
+-- Equip tool by name
+local function EquipFruit(targetFruit)
+    local Character = LocalPlayer.Character
+    if not Character then return end
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+    if not Humanoid then return end
+    for _, tool in pairs(Backpack:GetChildren()) do
+        local cleanName = string.match(tool.Name, "^(.-)%s*%[") or tool.Name
+        if cleanName == targetFruit then
+            Humanoid:EquipTool(tool)
+            break
+        end
+    end
+end
+
 -- 🥕 FARM AUTOMATION
+FarmTab:CreateLabel("Fruit Equip Automation")
+
+FarmTab:CreateDropdown({ Name = "Fruit Slot 1", Options = FruitList, CurrentOption = TargetFruit1, Callback = function(Value) TargetFruit1 = Value end })
+FarmTab:CreateDropdown({ Name = "Fruit Slot 2", Options = FruitList, CurrentOption = TargetFruit2, Callback = function(Value) TargetFruit2 = Value end })
+FarmTab:CreateDropdown({ Name = "Fruit Slot 3", Options = FruitList, CurrentOption = TargetFruit3, Callback = function(Value) TargetFruit3 = Value end })
+FarmTab:CreateDropdown({ Name = "Fruit Slot 4", Options = FruitList, CurrentOption = TargetFruit4, Callback = function(Value) TargetFruit4 = Value end })
+FarmTab:CreateDropdown({ Name = "Fruit Slot 5", Options = FruitList, CurrentOption = TargetFruit5, Callback = function(Value) TargetFruit5 = Value end })
+
+FarmTab:CreateToggle({
+    Name = "Auto Equip Fruits",
+    CurrentValue = false,
+    Callback = function(Value) AutoEquipEnabled = Value end
+})
+
+-- Auto equip loop
+task.spawn(function()
+    while task.wait(2) do
+        if AutoEquipEnabled then
+            if GetHeldItemName() ~= TargetFruit1 then EquipFruit(TargetFruit1) end
+            if GetHeldItemName() ~= TargetFruit2 then EquipFruit(TargetFruit2) end
+            if GetHeldItemName() ~= TargetFruit3 then EquipFruit(TargetFruit3) end
+            if GetHeldItemName() ~= TargetFruit4 then EquipFruit(TargetFruit4) end
+            if GetHeldItemName() ~= TargetFruit5 then EquipFruit(TargetFruit5) end
+        end
+    end
+end)
+
+-- 🥕 FARM AUTOMATION - Cooking Event
 FarmTab:CreateLabel("Cooking Event")
 local autoSubmit, autoCook, autoSubmitP = false, false, false
 
 FarmTab:CreateToggle({ Name = "Auto Submit Held Plant", CurrentValue = false, Callback = function(v) autoSubmit = v end })
-FarmTab:CreateToggle({ Name = "Auto Cook Pot", CurrentValue = false, Callback = function(v) autoCook = v end })
+FarmTab:CreateToggle({ Name = "Auto Cook Pot (Cooldown)", CurrentValue = false, Callback = function(v) autoCook = v end })
 FarmTab:CreateToggle({ Name = "Auto Submit Held Food to Chris P.", CurrentValue = false, Callback = function(v) autoSubmitP = v end })
 
 FarmTab:CreateButton({
@@ -107,11 +209,32 @@ FarmTab:CreateButton({
 	end
 })
 
+-- Loop for automation
 task.spawn(function()
 	while task.wait(0.5) do
-		if autoSubmit then pcall(function() ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("SubmitHeldPlant") end) end
-		if autoCook then pcall(function() ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("CookBest") end) end
-		if autoSubmitP then pcall(function() ReplicatedStorage.GameEvents.SubmitFoodService_RE:FireServer("SubmitHeldFood") end) end
+		if autoSubmit then
+			pcall(function()
+				ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("SubmitHeldPlant")
+			end)
+		end
+
+		if autoCook and not cookingCooldown then
+			-- Check if 5 fruits have been submitted before cooking
+			local potStatus = ReplicatedStorage.GameValues.CookingPotStatus.Value
+			if potStatus == "5 Fruits" then
+				pcall(function()
+					ReplicatedStorage.GameEvents.CookingPotService_RE:FireServer("CookBest")
+				end)
+				cookingCooldown = true
+				task.delay(10, function() cookingCooldown = false end) -- 10s cooldown
+			end
+		end
+
+		if autoSubmitP then
+			pcall(function()
+				ReplicatedStorage.GameEvents.SubmitFoodService_RE:FireServer("SubmitHeldFood")
+			end)
+		end
 	end
 end)
 
