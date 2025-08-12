@@ -124,7 +124,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Backpack = LocalPlayer:WaitForChild("Backpack")
 
--- Default targets (will be changed via dropdowns)
+-- Default Target Fruits (will use your FruitList from Rayfield)
 local TargetFruit1 = FruitList[1]
 local TargetFruit2 = FruitList[1]
 local TargetFruit3 = FruitList[1]
@@ -161,29 +161,74 @@ local function EquipFruit(targetFruit)
     end
 end
 
--- Rayfield UI (FarmTab)
-FarmTab:CreateDropdown({ Name = "Fruit Slot 1", Options = FruitList, CurrentOption = TargetFruit1, Callback = function(v) TargetFruit1 = v end })
-FarmTab:CreateDropdown({ Name = "Fruit Slot 2", Options = FruitList, CurrentOption = TargetFruit2, Callback = function(v) TargetFruit2 = v end })
-FarmTab:CreateDropdown({ Name = "Fruit Slot 3", Options = FruitList, CurrentOption = TargetFruit3, Callback = function(v) TargetFruit3 = v end })
-FarmTab:CreateDropdown({ Name = "Fruit Slot 4", Options = FruitList, CurrentOption = TargetFruit4, Callback = function(v) TargetFruit4 = v end })
-FarmTab:CreateDropdown({ Name = "Fruit Slot 5", Options = FruitList, CurrentOption = TargetFruit5, Callback = function(v) TargetFruit5 = v end })
+-- Rayfield UI inside FarmTab
+FarmTab:CreateDropdown({
+    Name = "Fruit Slot 1",
+    Options = FruitList,
+    CurrentOption = TargetFruit1,
+    Callback = function(Value)
+        TargetFruit1 = Value
+    end
+})
+
+FarmTab:CreateDropdown({
+    Name = "Fruit Slot 2",
+    Options = FruitList,
+    CurrentOption = TargetFruit2,
+    Callback = function(Value)
+        TargetFruit2 = Value
+    end
+})
+
+FarmTab:CreateDropdown({
+    Name = "Fruit Slot 3",
+    Options = FruitList,
+    CurrentOption = TargetFruit3,
+    Callback = function(Value)
+        TargetFruit3 = Value
+    end
+})
+
+FarmTab:CreateDropdown({
+    Name = "Fruit Slot 4",
+    Options = FruitList,
+    CurrentOption = TargetFruit4,
+    Callback = function(Value)
+        TargetFruit4 = Value
+    end
+})
+
+FarmTab:CreateDropdown({
+    Name = "Fruit Slot 5",
+    Options = FruitList,
+    CurrentOption = TargetFruit5,
+    Callback = function(Value)
+        TargetFruit5 = Value
+    end
+})
 
 FarmTab:CreateToggle({
     Name = "Auto Equip Fruits",
     CurrentValue = false,
-    Callback = function(v) AutoEquipEnabled = v end
+    Callback = function(Value)
+        AutoEquipEnabled = Value
+    end
 })
 
--- Auto equip loop
+-- Auto check loop
 task.spawn(function()
-    while task.wait(1) do
+    while task.wait(2) do
         if AutoEquipEnabled then
-            for _, fruit in ipairs({TargetFruit1, TargetFruit2, TargetFruit3, TargetFruit4, TargetFruit5}) do
-                if not AutoEquipEnabled then break end
-                if GetHeldItemName() ~= fruit then
-                    EquipFruit(fruit)
-                    task.wait(0.4) -- Small delay so it doesn’t spam
-                end
+            if GetHeldItemName() ~= TargetFruit1 then
+                EquipFruit(TargetFruit1)
+            elseif GetHeldItemName() ~= TargetFruit2 then
+                EquipFruit(TargetFruit2)
+            elseif GetHeldItemName() ~= TargetFruit3 then
+                EquipFruit(TargetFruit3)
+            elseif GetHeldItemName() ~= TargetFruit4 then
+                EquipFruit(TargetFruit4)
+            elseif GetHeldItemName() ~= TargetFruit5 then
+                EquipFruit(TargetFruit5)
             end
         end
     end
