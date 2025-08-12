@@ -220,15 +220,15 @@ task.spawn(function()
     while task.wait(2) do
         if AutoEquipEnabled then
             if GetHeldItemName() ~= TargetFruit1 then
-                EquipFruit(TargetFruit1)
+                EquipTool(TargetFruit1)
             elseif GetHeldItemName() ~= TargetFruit2 then
-                EquipFruit(TargetFruit2)
+                EquipTool(TargetFruit2)
             elseif GetHeldItemName() ~= TargetFruit3 then
-                EquipFruit(TargetFruit3)
+                EquipTool(TargetFruit3)
             elseif GetHeldItemName() ~= TargetFruit4 then
-                EquipFruit(TargetFruit4)
+                EquipTool(TargetFruit4)
             elseif GetHeldItemName() ~= TargetFruit5 then
-                EquipFruit(TargetFruit5)
+                EquipTool(TargetFruit5)
             end
         end
     end
