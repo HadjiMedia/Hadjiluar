@@ -124,7 +124,7 @@ local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Backpack = LocalPlayer:WaitForChild("Backpack")
 
--- Target fruits for 5 dropdowns
+-- Default targets (will be changed via dropdowns)
 local TargetFruit1 = FruitList[1]
 local TargetFruit2 = FruitList[1]
 local TargetFruit3 = FruitList[1]
@@ -138,7 +138,6 @@ local AutoEquipEnabled = false
 local function GetHeldItemName()
     local Character = LocalPlayer.Character
     if not Character then return nil end
-
     for _, item in pairs(Character:GetChildren()) do
         if item:IsA("Tool") then
             local cleanName = string.match(item.Name, "^(.-)%s*%[")
@@ -153,7 +152,6 @@ local function EquipFruit(targetFruit)
     if not Character then return end
     local Humanoid = Character:FindFirstChildOfClass("Humanoid")
     if not Humanoid then return end
-
     for _, tool in pairs(Backpack:GetChildren()) do
         local cleanName = string.match(tool.Name, "^(.-)%s*%[") or tool.Name
         if cleanName == targetFruit then
@@ -163,78 +161,29 @@ local function EquipFruit(targetFruit)
     end
 end
 
--- UI (now in FarmTab)
-FarmTab:CreateDropdown({
-    Name = "Fruit Slot 1",
-    Options = FruitList,
-    CurrentOption = TargetFruit1,
-    Callback = function(Value)
-        TargetFruit1 = Value
-    end
-})
-
-FarmTab:CreateDropdown({
-    Name = "Fruit Slot 2",
-    Options = FruitList,
-    CurrentOption = TargetFruit2,
-    Callback = function(Value)
-        TargetFruit2 = Value
-    end
-})
-
-FarmTab:CreateDropdown({
-    Name = "Fruit Slot 3",
-    Options = FruitList,
-    CurrentOption = TargetFruit3,
-    Callback = function(Value)
-        TargetFruit3 = Value
-    end
-})
-
-FarmTab:CreateDropdown({
-    Name = "Fruit Slot 4",
-    Options = FruitList,
-    CurrentOption = TargetFruit4,
-    Callback = function(Value)
-        TargetFruit4 = Value
-    end
-})
-
-FarmTab:CreateDropdown({
-    Name = "Fruit Slot 5",
-    Options = FruitList,
-    CurrentOption = TargetFruit5,
-    Callback = function(Value)
-        TargetFruit5 = Value
-    end
-})
+-- Rayfield UI (FarmTab)
+FarmTab:CreateDropdown({ Name = "Fruit Slot 1", Options = FruitList, CurrentOption = TargetFruit1, Callback = function(v) TargetFruit1 = v end })
+FarmTab:CreateDropdown({ Name = "Fruit Slot 2", Options = FruitList, CurrentOption = TargetFruit2, Callback = function(v) TargetFruit2 = v end })
+FarmTab:CreateDropdown({ Name = "Fruit Slot 3", Options = FruitList, CurrentOption = TargetFruit3, Callback = function(v) TargetFruit3 = v end })
+FarmTab:CreateDropdown({ Name = "Fruit Slot 4", Options = FruitList, CurrentOption = TargetFruit4, Callback = function(v) TargetFruit4 = v end })
+FarmTab:CreateDropdown({ Name = "Fruit Slot 5", Options = FruitList, CurrentOption = TargetFruit5, Callback = function(v) TargetFruit5 = v end })
 
 FarmTab:CreateToggle({
     Name = "Auto Equip Fruits",
     CurrentValue = false,
-    Callback = function(Value)
-        AutoEquipEnabled = Value
-    end
+    Callback = function(v) AutoEquipEnabled = v end
 })
 
--- Auto check loop
+-- Auto equip loop
 task.spawn(function()
-    while task.wait(2) do
+    while task.wait(1) do
         if AutoEquipEnabled then
-            if GetHeldItemName() ~= TargetFruit1 then
-                EquipFruit(TargetFruit1)
-            end
-            if GetHeldItemName() ~= TargetFruit2 then
-                EquipFruit(TargetFruit2)
-            end
-            if GetHeldItemName() ~= TargetFruit3 then
-                EquipFruit(TargetFruit3)
-            end
-            if GetHeldItemName() ~= TargetFruit4 then
-                EquipFruit(TargetFruit4)
-            end
-            if GetHeldItemName() ~= TargetFruit5 then
-                EquipFruit(TargetFruit5)
+            for _, fruit in ipairs({TargetFruit1, TargetFruit2, TargetFruit3, TargetFruit4, TargetFruit5}) do
+                if not AutoEquipEnabled then break end
+                if GetHeldItemName() ~= fruit then
+                    EquipFruit(fruit)
+                    task.wait(0.4) -- Small delay so it doesn’t spam
+                end
             end
         end
     end
