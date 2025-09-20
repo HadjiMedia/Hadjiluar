@@ -188,6 +188,7 @@ ShopTab:CreateLabel("Fall Event Market Auto Buy")
 local Dropdown = ShopTab:CreateDropdown({
     Name = "Fall Seeds",
     Options = FallSeed,
+	MultipleOptions = true,
     CurrentValue = {},
     Callback = function(choices)
         selectedFallSeeds = choices
@@ -205,6 +206,7 @@ ShopTab:CreateToggle({
 local Dropdown = ShopTab:CreateDropdown({
     Name = "Fall Gears",
     Options = FallGear,
+	MultipleOptions = true,
     CurrentValue = {},
     Callback = function(choices)
         selectedFallGears = choices
@@ -223,6 +225,7 @@ local Dropdown = ShopTab:CreateDropdown({
     Name = "Fall Eggs",
     Options = FallPet,
     CurrentValue = {},
+	MultipleOptions = true,
     Callback = function(choices)
         selectedFallEggs = choices
     end
@@ -239,6 +242,7 @@ ShopTab:CreateToggle({
 local Dropdown = ShopTab:CreateDropdown({
     Name = "Fall Cosmetics",
     Options = FallCosmetics,
+	MultipleOptions = true,
     CurrentValue = {},
     Callback = function(choices)
         selectedFallCosmetics = choices
@@ -263,19 +267,19 @@ task.spawn(function()
         end
         if autoBuyFG then
             for _, item in ipairs(selectedFallGears) do
-                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end)
+                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 2) end)
                 task.wait(0.3)
             end
         end
         if autoBuyFE then
             for _, item in ipairs(selectedFallEggs) do
-                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end)
+                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 3) end)
                 task.wait(0.3)
             end
         end
         if autoBuyFC then
             for _, item in ipairs(selectedFallCosmetics) do
-                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end)
+                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 4) end)
                 task.wait(0.3)
             end
         end
@@ -283,6 +287,124 @@ task.spawn(function()
     end
 end)
 
+local RS, autoBuyS, selectedSeeds = game:GetService("ReplicatedStorage"), false, {}
+
+ShopTab:CreateLabel("Auto Buy Local Shops")
+ShopTab:CreateDropdown({Name="Seed List",Options=SeedShopList,MultipleOptions=true,Default={},Callback=function(v)selectedSeeds=v end})
+ShopTab:CreateToggle({Name="Auto Buy Selected Seeds",CurrentValue=false,Callback=function(v)autoBuyS=v end})
+
+task.spawn(function()
+    while task.wait(1) do
+        if autoBuyS then
+            for _, s in ipairs(selectedSeeds) do
+                pcall(function()
+                    local t,n=s:match("^(.-)%s*|%s*(.+)$")
+                    if t and n then RS.GameEvents.BuySeedStock:FireServer(t,n) end
+                end)
+                task.wait(.3)
+            end
+        end
+    end
+end)
+
+local gearShopList = GearList -- Assuming GearList is already defined
+local eggShopList = EggList -- Assuming EggList is already defined
+
+
+local selectedGears, selectedEggs = {}, {}, {}
+local autoBuyG, autoBuyE = false, false, false
+
+ShopTab:CreateDropdown({ Name = "Gear List", Options = gearShopList, MultipleOptions = true, Default = {}, Callback = function(v) selectedGears = v end })
+ShopTab:CreateToggle({ Name = "Auto Buy Selected Gears", CurrentValue = false, Callback = function(v) autoBuyG = v end })
+
+ShopTab:CreateDropdown({ Name = "Egg Shop List", Options = eggShopList, MultipleOptions = true, Default = {}, Callback = function(v) selectedEggs = v end })
+ShopTab:CreateToggle({ Name = "Auto Buy Selected Eggs", CurrentValue = false, Callback = function(v) autoBuyE = v end })
+
+task.spawn(function()
+	while task.wait(1) do
+		if autoBuyG then for _, item in ipairs(selectedGears) do pcall(function() ReplicatedStorage.GameEvents.BuyGearStock:FireServer(item) end) task.wait(0.3) end end
+		if autoBuyE then for _, item in ipairs(selectedEggs) do pcall(function() ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(item) end) task.wait(0.3) end end
+	end
+end)
+
+-- 📍 TELEPORT UTILITIES
+TpTab:CreateLabel("Tap a button to teleport")
+local function teleportTo(cframe)
+	local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+	local hrp = char:WaitForChild("HumanoidRootPart")
+	hrp.CFrame = cframe
+end
+
+TpTab:CreateButton({ Name = "Seed Shop", Callback = function() teleportTo(CFrame.new(86.581, 3, -27.003)) end })
+TpTab:CreateButton({ Name = "Sell Stuff", Callback = function() teleportTo(CFrame.new(86.585, 3, 0.427)) end })
+TpTab:CreateButton({ Name = "Gear Shop", Callback = function() teleportTo(CFrame.new(-284.945, 3, -13.171)) end })
+TpTab:CreateButton({ Name = "Pet/Egg Shop", Callback = function() teleportTo(CFrame.new(-283.833, 3, -1.397)) end })
+TpTab:CreateButton({ Name = "Cosmetics Shop", Callback = function() teleportTo(CFrame.new(-283.216, 3, -25.605)) end })
+TpTab:CreateButton({ Name = "Event", Callback = function() teleportTo(CFrame.new(-103.816, 4.4, -6.888)) end })
+
+-- 🔧 MISC UTILITIES
+MiscTab:CreateButton({ Name = "Rejoin Server", Callback = function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end })
+
+local currentJobId = game.JobId or "Unavailable"
+MiscTab:CreateParagraph({ Title = "Your JobId", Content = currentJobId })
+
+MiscTab:CreateButton({
+	Name = "Copy JobId to Clipboard",
+	Callback = function()
+		if setclipboard then
+			setclipboard(currentJobId)
+			Rayfield:Notify({Title = "Copied", Content = "JobId copied to clipboard!", Duration = 3})
+		end
+	end
+})
+
+MiscTab:CreateInput({
+	Name = "Enter JobId to Join",
+	PlaceholderText = "Paste JobId here...",
+	Callback = function(jobId)
+		if jobId ~= "" then
+			TeleportService:TeleportToPlaceInstance(game.PlaceId, jobId, LocalPlayer)
+		end
+	end
+})
+
+MiscTab:CreateButton({
+	Name = "Server Hop",
+	Callback = function()
+		local url = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
+		local success, result = pcall(function() return HttpService:JSONDecode(game:HttpGet(url)) end)
+		if success and result and result.data then
+			for _, server in ipairs(result.data) do
+				if server.playing < server.maxPlayers and server.id ~= currentJobId then
+					TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
+					break
+				end
+			end
+		end
+	end
+})
+
+-- 💾 CONFIG SYSTEM
+Rayfield:LoadConfiguration()
+
+MiscTab:CreateButton({ Name = "Save Config", Callback = function() Rayfield:SaveConfiguration() end })
+MiscTab:CreateButton({ Name = "Load Config", Callback = function() Rayfield:LoadConfiguration() end })
+MiscTab:CreateInput({
+	Name = "Create Config",
+	PlaceholderText = "Enter config name",
+	Callback = function(name)
+		Rayfield:SetConfigurationName(name)
+		Rayfield:SaveConfiguration()
+	end
+})
+
+MiscTab:CreateInput({
+	Name = "Delete Config (Manual)",
+	PlaceholderText = "Delete via folder",
+	Callback = function()
+		Rayfield:Notify({ Title = "Notice", Content = "Please delete config files manually in workspace folder.", Duration = 5 })
+	end
+})
 -- Further enhancements or additions as required
 
 -- UI elements & script finish
