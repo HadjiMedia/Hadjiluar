@@ -76,6 +76,13 @@ local GearList = {
 local EggList = {
 "Common Egg", "Uncommon Egg", "Rare Egg", "Legendary Egg", "Mythical Egg", "Bug Egg"
 }
+
+local SeedShopList = {
+    "Carrot", "Strawberry", "Blueberry", "Orange Tulip", "Tomato", "Corn", "Daffodil", "Watermelon",
+	"Pumpkin", "Apple", "Bamboo", "Coconut", "Cactus", "Dragon Fruit", "Mango", "Grape", "Mushroom", 
+	"Pepper", "Cacao", "Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone",
+	"Elder Strawberry", "Romanesco"
+}
 -- 🌟 PLAYER UTILITIES
 PlayerTab:CreateToggle({
 	Name = "Infinite Jump",
@@ -132,7 +139,7 @@ end)
 
 
 -- 🛒 SHOP AUTOMATION
-local seedShopList = FruitList -- Assuming FruitList is already defined
+local seedShopList = SeedShopList -- Assuming FruitList is already defined
 local gearShopList = GearList -- Assuming GearList is already defined
 local eggShopList = EggList -- Assuming EggList is already defined
 
