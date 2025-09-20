@@ -32,6 +32,43 @@ local TeleportService = game:GetService("TeleportService")
 local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
+-- All Grow a Garden crops (alphabetical) 
+local FruitList = { "Aloe Vera", "Amber Spine", "Apple", "Artichoke", "Avocado",
+	"Badlands Pepper", "Bamboo", "Banana", "Beanstalk", "Bee Balm", "Bell Pepper",
+	"Bendboo", "Bitter Melon", "Blood Banana", "Blue Lollipop", "Blueberry", "Bone Blossom",
+	"Boneboo", "Broccoli", "Burning Bud", "Butternut Squash", "Cacao", "Cactus", "Canary Melon",
+	"Candy Blossom", "Candy Sunflower", "Cantaloupe", "Carrot", "Cauliflower", "Celestiberry",
+	"Cherry Blossom", "Chocolate Carrot", "Coconut", "Cocovine", "Corn", "Cranberry", 
+	"Crimson Vine", "Crocus", "Crown Melon", "Cursed Fruit", "Daffodil", "Dandelion", "Delphinium", 
+	"Dezen", "Dragon Fruit", "Dragon Pepper", "Dragon Sapling", "Durian", "Easter Egg", "Eggplant",
+	"Elder Strawberry", "Elephant Ears", "Ember Lily", "Enkaku", "Feijoa", "Firefly Fern", "Firework Flower",
+	"Fossilight", "Foxglove", "Fruitball", "Giant Pinecone", "Glowshroom", "Grand Tomato", "Mushroom", "Grape", 
+	"Rabbit Flower", "Hibiscus", "Hinomai", "Honeydew", "Stardust", "Irish Clover", "Ivy Gourd", "Lemon", "Lime", 
+	"Lucky Bamboo", "Magic Tulip", "Maple Apple", "Mango", "Monoblooma", "Moonlight Fruit", "Onion", "Orange", "Orchid", 
+	"Peach", "Pear", "Pepper", "Pineapple", "Plum", "Poisonberry", "Pomegranate", "Pumpkin", "Radish", "Rhubarb", "Rose", 
+	"Sakura Bush", "Shadow Apple", "Sinisterdrip", "Snowflake Bloom", "Sorbitree", "Spirit Petal", "Starfruit", "Strawberry", 
+	"Sugarglaze", "Sunflower", "Sundew", "Sweet Apple", "Taco Fern", "Taro Flower", "Tranquil Bloom", "Twisted Tangle",
+	"Veinpetal", "Violet Corn", "Watermelon", "Wildflower", "Yam", "Zucchini" }
+
+local GearList = { "Watering Can", "Trading Ticket", "Trowel", "Recall Wrench", "Basic Sprinkler", "Advance Sprinkler",
+	"Medium Toy", "Medium Treat", "Godly Sprinkler", "Magnifying Glass", "Master Sprinkler", "Cleaning Sprinkler", "Cleaning Pet Shard",
+	"Favorite Tool", "Harvest Tool", "Friendship Pot", "Grandmaster Sprinkler", "Levelup Lollipop" }
+
+local EggList = { "Common Egg", "Uncommon Egg", "Rare Egg", "Legendary Egg", "Mythical Egg", "Bug Egg" } 
+
+local SeedShopList = { "Carrot", "Strawberry", "Blueberry", "Orange Tulip", "Tomato", "Corn", "Daffodil", "Watermelon", 
+	"Pumpkin", "Apple", "Bamboo", "Coconut", "Cactus", "Dragon Fruit", "Mango", "Grape", "Mushroom", "Pepper", "Cacao", 
+	"Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry", "Romanesco" }
+
+local FallSeed = { "Turnip", "Parsley", "Meyer Lemon", "Carnival Pumpkin", "Kniphofia", "Golden Peach", "Maple Resin" }
+
+local FallGear = { "Firefly Jar", "Sky Lantern", "Maple Leaf Kite", "Leaf Blower", "Maple Syrup", "Maple Sprinkler", "Bonfire", 
+	"Harvest Basket", "Maple Leaf Charm", "Golden Acorn" } 
+
+local FallPet = { "Fall Egg", "Chipmunk", "Red Squirrel", "Marmot", "Sugar Glider", "Space Squirrel" }
+
+local FallCosmetics = { "Fall Create", "Fall Leaf Chair", "Maple Flag", "Flying Kite", "Fall Cosmetics" }
+
 -- Service Map (shortcuts)
 local Services = {
     Pets = ReplicatedStorage.GameEvents.PetsService,
