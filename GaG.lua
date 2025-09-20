@@ -153,191 +153,141 @@ RunService.Stepped:Connect(function()
 	end
 end)
 
-local FarmTab = Rayfield:CreateTab("FarmTab")
-local Label = Tab:CreateLabel("Fall Market Event", 4483362458, Color3.fromRGB(255, 255, 255), false) -- Title, Icon, Color, IgnoreTheme
-local autoSubmitPlants = false
-
+-- FarmTab with AutoSubmit and Auto Buy logic
 FarmTab:CreateLabel("Auto Submit All Plants To Fall Tree")
+local autoSubmitPlants = false
 FarmTab:CreateToggle({ Name = "Auto Submit All Plants", CurrentValue = false, Callback = function(v) autoSubmitPlants = v end })
 
 task.spawn(function()
     while true do
-        if autoSubmitPlants then pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("FallMarketEvent"):WaitForChild("SubmitAllPlants"):FireServer() end) end
+        if autoSubmitPlants then
+            pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("FallMarketEvent"):WaitForChild("SubmitAllPlants"):FireServer() end)
+        end
         task.wait(1)
     end
 end)
 
 FarmTab:CreateLabel("Auto Submit Held Plants To Fall Tree")
+local autoSubmitHeldPlants = false
 FarmTab:CreateToggle({ Name = "Auto Submit Held Plants", CurrentValue = false, Callback = function(v) autoSubmitHeldPlants = v end })
 
 task.spawn(function()
     while true do
-        if autoSubmitPlants then pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("FallMarketEvent"):WaitForChild("SubmitHeldPlant"):FireServer() end) end
+        if autoSubmitHeldPlants then
+            pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("FallMarketEvent"):WaitForChild("SubmitHeldPlant"):FireServer() end)
+        end
         task.wait(1)
     end
 end)
 
+-- Multi-select Fall items to buy
 local selectedFallSeeds, selectedFallGears, selectedFallEggs, selectedFallCosmetics = {}, {}, {}, {}
 local autoBuyFS, autoBuyFG, autoBuyFE, autoBuyFC = false, false, false, false
 
 FarmTab:CreateLabel("Multi-select fall seeds to buy")
-FarmTab:CreateDropdown({ Name = "Fall Seed List", Options = FallSeed, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallSeeds = v end })
-FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Seeds", CurrentValue = false, Callback = function(v) autoBuyFS = v end })
+FarmTab:CreateMultiChoice({
+    Name = "Fall Seeds",
+    Options = FallSeed,
+    CurrentValue = {},
+    Callback = function(choices)
+        selectedFallSeeds = choices
+    end
+})
+
+FarmTab:CreateToggle({
+    Name = "Auto Buy Fall Seeds",
+    CurrentValue = false,
+    Callback = function(v)
+        autoBuyFS = v
+    end
+})
 
 FarmTab:CreateLabel("Multi-select fall gears to buy")
-FarmTab:CreateDropdown({ Name = "Fall Gear List", Options = FallGear, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallGears = v end })
-FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Gears", CurrentValue = false, Callback = function(v) autoBuyFG = v end })
+FarmTab:CreateMultiChoice({
+    Name = "Fall Gears",
+    Options = FallGear,
+    CurrentValue = {},
+    Callback = function(choices)
+        selectedFallGears = choices
+    end
+})
 
-FarmTab:CreateLabel("Multi-select fall pets to buy")
-FarmTab:CreateDropdown({ Name = "Fall Pet List", Options = FallPet, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallEggs = v end })
-FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Pets", CurrentValue = false, Callback = function(v) autoBuyFE = v end })
+FarmTab:CreateToggle({
+    Name = "Auto Buy Fall Gears",
+    CurrentValue = false,
+    Callback = function(v)
+        autoBuyFG = v
+    end
+})
+
+FarmTab:CreateLabel("Multi-select fall eggs to buy")
+FarmTab:CreateMultiChoice({
+    Name = "Fall Eggs",
+    Options = FallPet,
+    CurrentValue = {},
+    Callback = function(choices)
+        selectedFallEggs = choices
+    end
+})
+
+FarmTab:CreateToggle({
+    Name = "Auto Buy Fall Eggs",
+    CurrentValue = false,
+    Callback = function(v)
+        autoBuyFE = v
+    end
+})
 
 FarmTab:CreateLabel("Multi-select fall cosmetics to buy")
-FarmTab:CreateDropdown({ Name = "Fall Cosmetics List", Options = FallCosmetics, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallCosmetics = v end })
-FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Cosmetics", CurrentValue = false, Callback = function(v) autoBuyFC = v end })
-
-task.spawn(function()
-    while task.wait(1) do
-        if autoBuyS then for _, item in ipairs(selectedFallSeeds) do pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end) task.wait(0.3) end
-        if autoBuyG then for _, item in ipairs(selectedFallGears) do pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end) task.wait(0.3) end
-        if autoBuyE then for _, item in ipairs(selectedFallEggs) do pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end) task.wait(0.3) end
-        if autoBuyC then for _, item in ipairs(selectedFallCosmetics) do pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end) task.wait(0.3) end
+FarmTab:CreateMultiChoice({
+    Name = "Fall Cosmetics",
+    Options = FallCosmetics,
+    CurrentValue = {},
+    Callback = function(choices)
+        selectedFallCosmetics = choices
     end
-end)
-
-
--- 🛒 SHOP AUTOMATION
-local seedShopList = SeedShopList -- Assuming SeedShopList is already defined
-local selectedSeeds = {} -- Initialize empty table for selected seeds
-local autoBuyS = false -- Flag for auto-buying seeds
-
-ShopTab:CreateLabel("Multi-select seeds to buy")
-ShopTab:CreateDropdown({ 
-    Name = "Seed List", 
-    Options = seedShopList, 
-    MultipleOptions = true, 
-    Default = {}, 
-    Callback = function(v) selectedSeeds = v end 
-})
-ShopTab:CreateToggle({ 
-    Name = "Auto Buy Selected Seeds", 
-    CurrentValue = false, 
-    Callback = function(v) autoBuyS = v end 
 })
 
--- Handle seed purchasing logic
+FarmTab:CreateToggle({
+    Name = "Auto Buy Fall Cosmetics",
+    CurrentValue = false,
+    Callback = function(v)
+        autoBuyFC = v
+    end
+})
+
 task.spawn(function()
-    while task.wait(1) do
-        if autoBuyS then
-            for _, seed in ipairs(selectedSeeds) do
-                pcall(function() 
-                    ReplicatedStorage.GameEvents.BuySeedStock:FireServer(unpack(args)) 
-                end)
+    while true do
+        if autoBuyFS then
+            for _, item in ipairs(selectedFallSeeds) do
+                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end)
                 task.wait(0.3)
             end
         end
+        if autoBuyFG then
+            for _, item in ipairs(selectedFallGears) do
+                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end)
+                task.wait(0.3)
+            end
+        end
+        if autoBuyFE then
+            for _, item in ipairs(selectedFallEggs) do
+                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end)
+                task.wait(0.3)
+            end
+        end
+        if autoBuyFC then
+            for _, item in ipairs(selectedFallCosmetics) do
+                pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end)
+                task.wait(0.3)
+            end
+        end
+        task.wait(0.5)
     end
 end)
 
+-- Further enhancements or additions as required
 
+-- UI elements & script finish
+Rayfield:Init()
 
-local gearShopList = GearList -- Assuming GearList is already defined
-local eggShopList = EggList -- Assuming EggList is already defined
-
-
-local selectedGears, selectedEggs = {}, {}, {}
-local autoBuyG, autoBuyE = false, false, false
-
-ShopTab:CreateLabel("Multi-select gears to buy")
-ShopTab:CreateDropdown({ Name = "Gear List", Options = gearShopList, MultipleOptions = true, Default = {}, Callback = function(v) selectedGears = v end })
-ShopTab:CreateToggle({ Name = "Auto Buy Selected Gears", CurrentValue = false, Callback = function(v) autoBuyG = v end })
-
-ShopTab:CreateLabel("Multi-select eggs to buy")
-ShopTab:CreateDropdown({ Name = "Egg Shop List", Options = eggShopList, MultipleOptions = true, Default = {}, Callback = function(v) selectedEggs = v end })
-ShopTab:CreateToggle({ Name = "Auto Buy Selected Eggs", CurrentValue = false, Callback = function(v) autoBuyE = v end })
-
-task.spawn(function()
-	while task.wait(1) do
-		if autoBuyG then for _, item in ipairs(selectedGears) do pcall(function() ReplicatedStorage.GameEvents.BuyGearStock:FireServer(item) end) task.wait(0.3) end end
-		if autoBuyE then for _, item in ipairs(selectedEggs) do pcall(function() ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(item) end) task.wait(0.3) end end
-	end
-end)
-
--- 📍 TELEPORT UTILITIES
-TpTab:CreateLabel("Tap a button to teleport")
-local function teleportTo(cframe)
-	local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-	local hrp = char:WaitForChild("HumanoidRootPart")
-	hrp.CFrame = cframe
-end
-
-TpTab:CreateButton({ Name = "Seed Shop", Callback = function() teleportTo(CFrame.new(86.581, 3, -27.003)) end })
-TpTab:CreateButton({ Name = "Sell Stuff", Callback = function() teleportTo(CFrame.new(86.585, 3, 0.427)) end })
-TpTab:CreateButton({ Name = "Gear Shop", Callback = function() teleportTo(CFrame.new(-284.945, 3, -13.171)) end })
-TpTab:CreateButton({ Name = "Pet/Egg Shop", Callback = function() teleportTo(CFrame.new(-283.833, 3, -1.397)) end })
-TpTab:CreateButton({ Name = "Cosmetics Shop", Callback = function() teleportTo(CFrame.new(-283.216, 3, -25.605)) end })
-TpTab:CreateButton({ Name = "Event", Callback = function() teleportTo(CFrame.new(-103.816, 4.4, -6.888)) end })
-
--- 🔧 MISC UTILITIES
-MiscTab:CreateButton({ Name = "Rejoin Server", Callback = function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end })
-
-local currentJobId = game.JobId or "Unavailable"
-MiscTab:CreateParagraph({ Title = "Your JobId", Content = currentJobId })
-
-MiscTab:CreateButton({
-	Name = "Copy JobId to Clipboard",
-	Callback = function()
-		if setclipboard then
-			setclipboard(currentJobId)
-			Rayfield:Notify({Title = "Copied", Content = "JobId copied to clipboard!", Duration = 3})
-		end
-	end
-})
-
-MiscTab:CreateInput({
-	Name = "Enter JobId to Join",
-	PlaceholderText = "Paste JobId here...",
-	Callback = function(jobId)
-		if jobId ~= "" then
-			TeleportService:TeleportToPlaceInstance(game.PlaceId, jobId, LocalPlayer)
-		end
-	end
-})
-
-MiscTab:CreateButton({
-	Name = "Server Hop",
-	Callback = function()
-		local url = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"
-		local success, result = pcall(function() return HttpService:JSONDecode(game:HttpGet(url)) end)
-		if success and result and result.data then
-			for _, server in ipairs(result.data) do
-				if server.playing < server.maxPlayers and server.id ~= currentJobId then
-					TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer)
-					break
-				end
-			end
-		end
-	end
-})
-
--- 💾 CONFIG SYSTEM
-Rayfield:LoadConfiguration()
-
-MiscTab:CreateButton({ Name = "Save Config", Callback = function() Rayfield:SaveConfiguration() end })
-MiscTab:CreateButton({ Name = "Load Config", Callback = function() Rayfield:LoadConfiguration() end })
-MiscTab:CreateInput({
-	Name = "Create Config",
-	PlaceholderText = "Enter config name",
-	Callback = function(name)
-		Rayfield:SetConfigurationName(name)
-		Rayfield:SaveConfiguration()
-	end
-})
-
-MiscTab:CreateInput({
-	Name = "Delete Config (Manual)",
-	PlaceholderText = "Delete via folder",
-	Callback = function()
-		Rayfield:Notify({ Title = "Notice", Content = "Please delete config files manually in workspace folder.", Duration = 5 })
-	end
-})
