@@ -117,7 +117,7 @@ task.spawn(function()while task.wait(1)do if aFeed and selNPC then pcall(functio
 AutoTab:CreateLabel("Auto Change Pet Loadout")
 local aSwap=false delayTime=5 swapSlots={} local order={"1","2","3"}
 AutoTab:CreateInput({Name="Swap Delay (sec)",PlaceholderText="Enter seconds",RemoveTextAfterFocusLost=true,Callback=function(v)delayTime=tonumber(v)or 5 end})
-AutoTab:CreateDropdown({Name="Select Loadouts",Options={"1","2","3"},MultipleOptions=false,Default={},Callback=function(v)swapSlots=v end})
+AutoTab:CreateDropdown({Name="Select Loadouts",Options={"1","2","3"},MultipleOptions=true,Default={},Callback=function(v)swapSlots=v end})
 AutoTab:CreateToggle({Name="Auto Swap Pets",CurrentValue=false,Flag="AutoSwapPets",Callback=function(v)aSwap=v end})
 task.spawn(function()while task.wait()do if aSwap and #swapSlots>0 then for _,slot in ipairs(order)do if not aSwap then break end for _,sel in ipairs(swapSlots)do if sel==slot then local args={"SwapPetLoadout",tonumber(slot)} pcall(function()Services.Pets:FireServer(unpack(args))end) task.wait(delayTime) end end end end end end)
 
