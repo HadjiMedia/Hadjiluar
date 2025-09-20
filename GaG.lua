@@ -139,17 +139,46 @@ end)
 
 
 -- 🛒 SHOP AUTOMATION
-local seedShopList = SeedShopList -- Assuming FruitList is already defined
+local seedShopList = SeedShopList -- Assuming SeedShopList is already defined
+local selectedSeeds = {} -- Initialize empty table for selected seeds
+local autoBuyS = false -- Flag for auto-buying seeds
+
+ShopTab:CreateLabel("Multi-select seeds to buy")
+ShopTab:CreateDropdown({ 
+    Name = "Seed List", 
+    Options = seedShopList, 
+    MultipleOptions = true, 
+    Default = {}, 
+    Callback = function(v) selectedSeeds = v end 
+})
+ShopTab:CreateToggle({ 
+    Name = "Auto Buy Selected Seeds", 
+    CurrentValue = false, 
+    Callback = function(v) autoBuyS = v end 
+})
+
+-- Handle seed purchasing logic
+task.spawn(function()
+    while task.wait(1) do
+        if autoBuyS then
+            for _, seed in ipairs(selectedSeeds) do
+                local args = { "Tier 1", seed } -- Dynamic args for each selected seed
+                pcall(function() 
+                    ReplicatedStorage.GameEvents.BuySeedStock:FireServer(unpack(args)) 
+                end)
+                task.wait(0.3) -- Wait to prevent spamming
+            end
+        end
+    end
+end)
+
+
 local gearShopList = GearList -- Assuming GearList is already defined
 local eggShopList = EggList -- Assuming EggList is already defined
 
 
-local selectedSeeds, selectedGears, selectedEggs = {}, {}, {}
-local autoBuyS, autoBuyG, autoBuyE = false, false, false
-
-ShopTab:CreateLabel("Multi-select seeds to buy")
-ShopTab:CreateDropdown({ Name = "Seed List", Options = seedShopList, MultipleOptions = true, Default = {}, Callback = function(v) selectedSeeds = v end })
-ShopTab:CreateToggle({ Name = "Auto Buy Selected Seeds", CurrentValue = false, Callback = function(v) autoBuyS = v end })
+local selectedGears, selectedEggs = {}, {}, {}
+local autoBuyG, autoBuyE = false, false, false
 
 ShopTab:CreateLabel("Multi-select gears to buy")
 ShopTab:CreateDropdown({ Name = "Gear List", Options = gearShopList, MultipleOptions = true, Default = {}, Callback = function(v) selectedGears = v end })
@@ -161,7 +190,6 @@ ShopTab:CreateToggle({ Name = "Auto Buy Selected Eggs", CurrentValue = false, Ca
 
 task.spawn(function()
 	while task.wait(1) do
-		if autoBuyS then for _, item in ipairs(selectedSeeds) do pcall(function() ReplicatedStorage.GameEvents.BuySeedStock:FireServer(item) end) task.wait(0.3) end end
 		if autoBuyG then for _, item in ipairs(selectedGears) do pcall(function() ReplicatedStorage.GameEvents.BuyGearStock:FireServer(item) end) task.wait(0.3) end end
 		if autoBuyE then for _, item in ipairs(selectedEggs) do pcall(function() ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(item) end) task.wait(0.3) end end
 	end
