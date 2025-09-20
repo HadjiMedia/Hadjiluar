@@ -140,29 +140,43 @@ FarmTab:CreateLabel("Auto Submit Held Plants To Fall Tree")
 local autoSubmitHeldPlants=false
 FarmTab:CreateToggle({Name="Auto Submit Held Plants",CurrentValue=false,Callback=function(v)autoSubmitHeldPlants=v end})
 task.spawn(function()while true do if autoSubmitHeldPlants then pcall(function()Services.FallHeld:FireServer()end)end task.wait(1)end end)
--- 🛒 Fall Shop Auto-Buy (FarmTab)
-local Shop = game:GetService("ReplicatedStorage").GameEvents.BuyEventShopStock
-local GearList, CosmeticList, SeedList, PetList =
-{"Firefly Jar","Sky Lantern","Maple Leaf Kite","Leaf Blower","Maple Syrup","Maple Sprinkler","Bonfire","Harvest Basket","Maple Leaf Charm","Golden Acorn"},
-{"Fall Crate","Fall Leaf Chair","Maple Flag","Flying Kite","Fall Cosmetics"},
-{"Turnip","Parsley","Meyer Lemon","Carnival Pumpkin","Kniphofia","Golden Peach","Maple Resin"},
-{"Fall Egg","Chipmunk","Red Squirrel","Marmot","Sugar Glider","Space Squirrel"}
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Shop = ReplicatedStorage:WaitForChild("GameEvents"):WaitForChild("BuyEventShopStock")
 
-local selG,selC,selS,selP=nil,nil,nil,nil
-local autoG,autoC,autoS,autoP=false,false,false,false
-local function loop(auto,item,id)task.spawn(function()while auto do if item then local args={item,id}Shop:FireServer(unpack(args))end task.wait(1)end end)end
+-- Fall Shop multi-select lists
+local selectedFallSeeds, selectedFallGears, selectedFallEggs, selectedFallCosmetics = {}, {}, {}, {}
+local autoBuyFS, autoBuyFG, autoBuyFE, autoBuyFC = false, false, false, false
 
-FarmTab:CreateDropdown({Name="Gear",Options=GearList,Callback=function(v)selG=v end})
-FarmTab:CreateToggle({Name="Auto Gear",CurrentValue=false,Callback=function(v)autoG=v if v then loop(autoG,selG,2)end end})
+-- Seeds
+FarmTab:CreateLabel("Multi-select fall seeds to buy")
+FarmTab:CreateDropdown({ Name = "Fall Seed List", Options = FallSeed, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallSeeds = v end })
+FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Seeds", CurrentValue = false, Callback = function(v) autoBuyFS = v end })
 
-FarmTab:CreateDropdown({Name="Cosmetics",Options=CosmeticList,Callback=function(v)selC=v end})
-FarmTab:CreateToggle({Name="Auto Cosmetics",CurrentValue=false,Callback=function(v)autoC=v if v then loop(autoC,selC,4)end end})
+-- Gears
+FarmTab:CreateLabel("Multi-select fall gears to buy")
+FarmTab:CreateDropdown({ Name = "Fall Gear List", Options = FallGear, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallGears = v end })
+FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Gears", CurrentValue = false, Callback = function(v) autoBuyFG = v end })
 
-FarmTab:CreateDropdown({Name="Seeds",Options=SeedList,Callback=function(v)selS=v end})
-FarmTab:CreateToggle({Name="Auto Seeds",CurrentValue=false,Callback=function(v)autoS=v if v then loop(autoS,selS,1)end end})
+-- Pets
+FarmTab:CreateLabel("Multi-select fall pets to buy")
+FarmTab:CreateDropdown({ Name = "Fall Pet List", Options = FallPet, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallEggs = v end })
+FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Pets", CurrentValue = false, Callback = function(v) autoBuyFE = v end })
 
-FarmTab:CreateDropdown({Name="Pets",Options=PetList,Callback=function(v)selP=v end})
-FarmTab:CreateToggle({Name="Auto Pets",CurrentValue=false,Callback=function(v)autoP=v if v then loop(autoP,selP,3)end end})
+-- Cosmetics
+FarmTab:CreateLabel("Multi-select fall cosmetics to buy")
+FarmTab:CreateDropdown({ Name = "Fall Cosmetics List", Options = FallCosmetics, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallCosmetics = v end })
+FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Cosmetics", CurrentValue = false, Callback = function(v) autoBuyFC = v end })
+
+-- Auto-buy loop
+task.spawn(function()
+    while task.wait(0.3) do
+        if autoBuyFS then for _, item in ipairs(selectedFallSeeds) do pcall(function() Shop:FireServer(item, 1) end) end end
+        if autoBuyFG then for _, item in ipairs(selectedFallGears) do pcall(function() Shop:FireServer(item, 1) end) end end
+        if autoBuyFE then for _, item in ipairs(selectedFallEggs) do pcall(function() Shop:FireServer(item, 1) end) end end
+        if autoBuyFC then for _, item in ipairs(selectedFallCosmetics) do pcall(function() Shop:FireServer(item, 1) end) end end
+    end
+end)
+
 
 
 --// SHOPS
