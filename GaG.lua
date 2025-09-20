@@ -168,9 +168,76 @@ local noclip=false
 PlayerTab:CreateToggle({Name="No Clip",CurrentValue=false,Callback=function(v)noclip=v end})
 RunService.Stepped:Connect(function()if noclip and LocalPlayer.Character then for _,p in ipairs(LocalPlayer.Character:GetDescendants())do if p:IsA("BasePart") and p.CanCollide then p.CanCollide=false end end end end)
 
-local flying=false local speed=50
-PlayerTab:CreateToggle({Name="Fly",CurrentValue=false,Callback=function(v)flying=v if v then local hum=LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")if hum then hum.PlatformStand=true end task.spawn(function()while flying do local hrp=LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")if hrp then local dir=Vector3.zero local uis=game:GetService("UserInputService")if uis:IsKeyDown(Enum.KeyCode.W)then dir=dir+workspace.CurrentCamera.CFrame.LookVector end if uis:IsKeyDown(Enum.KeyCode.S)then dir=dir-workspace.CurrentCamera.CFrame.LookVector end if uis:IsKeyDown(Enum.KeyCode.A)then dir=dir-workspace.CurrentCamera.CFrame.RightVector end if uis:IsKeyDown(Enum.KeyCode.D)then dir=dir+workspace.CurrentCamera.CFrame.RightVector end hrp.Velocity=dir*speed end task.wait()end end)else local hum=LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")if hum then hum.PlatformStand=false end end end})
-PlayerTab:CreateSlider({Name="Fly Speed",Range={10,200},Increment=5,CurrentValue=50,Callback=function(v)speed=v end})
+local flying = false
+local flySpeed = 3
+local Player = game.Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UIS = game:GetService("UserInputService")
+
+local ctrl = {f = 0, b = 0, l = 0, r = 0}
+
+PlayerTab:CreateToggle({
+    Name = "Fly",
+    CurrentValue = false,
+    Callback = function(v)
+        flying = v
+        local char = Player.Character or Player.CharacterAdded:Wait()
+        local hrp = char:WaitForChild("HumanoidRootPart")
+
+        if flying then
+            local bg = Instance.new("BodyGyro", hrp)
+            bg.P = 9e4
+            bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
+            bg.CFrame = hrp.CFrame
+
+            local bv = Instance.new("BodyVelocity", hrp)
+            bv.Velocity = Vector3.new(0,0.1,0)
+            bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
+
+            RunService.RenderStepped:Connect(function()
+                if flying and hrp and hrp.Parent then
+                    local camCF = workspace.CurrentCamera.CFrame
+                    local move = Vector3.new(ctrl.l+ctrl.r, ctrl.f+ctrl.b, 0)
+                    bv.Velocity = ((camCF.LookVector * move.Y) + (camCF.RightVector * move.X)) * flySpeed
+                    bg.CFrame = camCF
+                end
+            end)
+        else
+            if hrp:FindFirstChild("BodyGyro") then hrp.BodyGyro:Destroy() end
+            if hrp:FindFirstChild("BodyVelocity") then hrp.BodyVelocity:Destroy() end
+        end
+    end
+})
+
+-- Controls (WASD + Space/Shift for up/down)
+UIS.InputBegan:Connect(function(i)
+    if i.KeyCode == Enum.KeyCode.W then ctrl.f = 1 end
+    if i.KeyCode == Enum.KeyCode.S then ctrl.b = -1 end
+    if i.KeyCode == Enum.KeyCode.A then ctrl.l = -1 end
+    if i.KeyCode == Enum.KeyCode.D then ctrl.r = 1 end
+    if i.KeyCode == Enum.KeyCode.Space then ctrl.b = 1 end
+    if i.KeyCode == Enum.KeyCode.LeftShift then ctrl.f = -1 end
+end)
+
+UIS.InputEnded:Connect(function(i)
+    if i.KeyCode == Enum.KeyCode.W then ctrl.f = 0 end
+    if i.KeyCode == Enum.KeyCode.S then ctrl.b = 0 end
+    if i.KeyCode == Enum.KeyCode.A then ctrl.l = 0 end
+    if i.KeyCode == Enum.KeyCode.D then ctrl.r = 0 end
+    if i.KeyCode == Enum.KeyCode.Space then ctrl.b = 0 end
+    if i.KeyCode == Enum.KeyCode.LeftShift then ctrl.f = 0 end
+end)
+
+-- Optional speed control slider
+PlayerTab:CreateSlider({
+    Name = "Fly Speed",
+    Range = {1, 10},
+    Increment = 1,
+    CurrentValue = 3,
+    Callback = function(v)
+        flySpeed = v
+    end
+})
 
 -- 📍 TELEPORT UTILITIES
 TpTab:CreateLabel("Tap a button to teleport") 
