@@ -140,6 +140,30 @@ FarmTab:CreateLabel("Auto Submit Held Plants To Fall Tree")
 local autoSubmitHeldPlants=false
 FarmTab:CreateToggle({Name="Auto Submit Held Plants",CurrentValue=false,Callback=function(v)autoSubmitHeldPlants=v end})
 task.spawn(function()while true do if autoSubmitHeldPlants then pcall(function()Services.FallHeld:FireServer()end)end task.wait(1)end end)
+-- 🛒 Fall Shop Auto-Buy (FarmTab)
+local Shop = game:GetService("ReplicatedStorage").GameEvents.BuyEventShopStock
+local GearList, CosmeticList, SeedList, PetList =
+{"Firefly Jar","Sky Lantern","Maple Leaf Kite","Leaf Blower","Maple Syrup","Maple Sprinkler","Bonfire","Harvest Basket","Maple Leaf Charm","Golden Acorn"},
+{"Fall Crate","Fall Leaf Chair","Maple Flag","Flying Kite","Fall Cosmetics"},
+{"Turnip","Parsley","Meyer Lemon","Carnival Pumpkin","Kniphofia","Golden Peach","Maple Resin"},
+{"Fall Egg","Chipmunk","Red Squirrel","Marmot","Sugar Glider","Space Squirrel"}
+
+local selG,selC,selS,selP=nil,nil,nil,nil
+local autoG,autoC,autoS,autoP=false,false,false,false
+local function loop(auto,item,id)task.spawn(function()while auto do if item then local args={item,id}Shop:FireServer(unpack(args))end task.wait(1)end end)end
+
+FarmTab:CreateDropdown({Name="Gear",Options=GearList,Callback=function(v)selG=v end})
+FarmTab:CreateToggle({Name="Auto Gear",CurrentValue=false,Callback=function(v)autoG=v if v then loop(autoG,selG,2)end end})
+
+FarmTab:CreateDropdown({Name="Cosmetics",Options=CosmeticList,Callback=function(v)selC=v end})
+FarmTab:CreateToggle({Name="Auto Cosmetics",CurrentValue=false,Callback=function(v)autoC=v if v then loop(autoC,selC,4)end end})
+
+FarmTab:CreateDropdown({Name="Seeds",Options=SeedList,Callback=function(v)selS=v end})
+FarmTab:CreateToggle({Name="Auto Seeds",CurrentValue=false,Callback=function(v)autoS=v if v then loop(autoS,selS,1)end end})
+
+FarmTab:CreateDropdown({Name="Pets",Options=PetList,Callback=function(v)selP=v end})
+FarmTab:CreateToggle({Name="Auto Pets",CurrentValue=false,Callback=function(v)autoP=v if v then loop(autoP,selP,3)end end})
+
 
 --// SHOPS
 local selectedSeeds,selectedGears,selectedEggs={}, {}, {} local autoBuyS,autoBuyG,autoBuyE=false,false,false
