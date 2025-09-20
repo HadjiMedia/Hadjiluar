@@ -50,15 +50,9 @@ local FruitList = { "Aloe Vera", "Amber Spine", "Apple", "Artichoke", "Avocado",
 	"Sugarglaze", "Sunflower", "Sundew", "Sweet Apple", "Taco Fern", "Taro Flower", "Tranquil Bloom", "Twisted Tangle",
 	"Veinpetal", "Violet Corn", "Watermelon", "Wildflower", "Yam", "Zucchini" }
 
-local GearList = { "Watering Can", "Trading Ticket", "Trowel", "Recall Wrench", "Basic Sprinkler", "Advance Sprinkler",
-	"Medium Toy", "Medium Treat", "Godly Sprinkler", "Magnifying Glass", "Master Sprinkler", "Cleaning Sprinkler", "Cleaning Pet Shard",
-	"Favorite Tool", "Harvest Tool", "Friendship Pot", "Grandmaster Sprinkler", "Levelup Lollipop" }
-
-local EggList = { "Common Egg", "Uncommon Egg", "Rare Egg", "Legendary Egg", "Mythical Egg", "Bug Egg" } 
-
-local SeedShopList = { "Carrot", "Strawberry", "Blueberry", "Orange Tulip", "Tomato", "Corn", "Daffodil", "Watermelon", 
-	"Pumpkin", "Apple", "Bamboo", "Coconut", "Cactus", "Dragon Fruit", "Mango", "Grape", "Mushroom", "Pepper", "Cacao", 
-	"Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone", "Elder Strawberry", "Romanesco" }
+local GearList={"Watering Can","Trading Ticket","Trowel","Recall Wrench","Basic Sprinkler","Advance Sprinkler","Medium Toy","Medium Treat","Godly Sprinkler","Magnifying Glass","Master Sprinkler","Cleaning Sprinkler","Cleaning Pet Shard","Favorite Tool","Harvest Tool","Friendship Pot","Grandmaster Sprinkler","Levelup Lollipop"}
+local EggList={"Common Egg","Uncommon Egg","Rare Egg","Legendary Egg","Mythical Egg","Bug Egg"}
+local SeedShopList={"Carrot","Strawberry","Blueberry","Orange Tulip","Tomato","Corn","Daffodil","Watermelon","Pumpkin","Apple","Bamboo","Coconut","Cactus","Dragon Fruit","Mango","Grape","Mushroom","Pepper","Cacao","Beanstalk","Ember Lily","Sugar Apple","Burning Bud","Giant Pinecone","Elder Strawberry","Romanesco"}
 
 local FallSeed = { "Turnip", "Parsley", "Meyer Lemon", "Carnival Pumpkin", "Kniphofia", "Golden Peach", "Maple Resin" }
 
@@ -148,8 +142,7 @@ FarmTab:CreateToggle({Name="Auto Submit Held Plants",CurrentValue=false,Callback
 task.spawn(function()while true do if autoSubmitHeldPlants then pcall(function()Services.FallHeld:FireServer()end)end task.wait(1)end end)
 
 --// SHOPS
-local selectedSeeds,selectedGears,selectedEggs={}, {}, {}
-local autoBuyS,autoBuyG,autoBuyE=false,false,false
+local selectedSeeds,selectedGears,selectedEggs={}, {}, {} local autoBuyS,autoBuyG,autoBuyE=false,false,false
 ShopTab:CreateLabel("Auto Buy Shops")
 ShopTab:CreateDropdown({Name="Seed List",Options=SeedShopList,MultipleOptions=true,Default={},Callback=function(v)selectedSeeds=v end})
 ShopTab:CreateToggle({Name="Auto Buy Seeds",CurrentValue=false,Callback=function(v)autoBuyS=v end})
@@ -159,7 +152,7 @@ ShopTab:CreateDropdown({Name="Egg List",Options=EggList,MultipleOptions=true,Def
 ShopTab:CreateToggle({Name="Auto Buy Eggs",CurrentValue=false,Callback=function(v)autoBuyE=v end})
 
 task.spawn(function()while task.wait(1)do
- if autoBuyS then for _,s in ipairs(selectedSeeds)do pcall(function()Services.BuySeed:FireServer(s)end)task.wait(.3)end end
- if autoBuyG then for _,g in ipairs(selectedGears)do pcall(function()Services.BuyGear:FireServer(g)end)task.wait(.3)end end
- if autoBuyE then for _,e in ipairs(selectedEggs)do pcall(function()Services.BuyEgg:FireServer(e)end)task.wait(.3)end end
+ if autoBuyS then for _,s in ipairs(selectedSeeds)do pcall(function()ReplicatedStorage.GameEvents.BuySeedStock:FireServer(s)end)task.wait(.3)end end
+ if autoBuyG then for _,g in ipairs(selectedGears)do pcall(function()ReplicatedStorage.GameEvents.BuyGearStock:FireServer(g)end)task.wait(.3)end end
+ if autoBuyE then for _,e in ipairs(selectedEggs)do pcall(function()ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(e)end)task.wait(.3)end end
 end end)
