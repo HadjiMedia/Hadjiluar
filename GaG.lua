@@ -168,75 +168,51 @@ local noclip=false
 PlayerTab:CreateToggle({Name="No Clip",CurrentValue=false,Callback=function(v)noclip=v end})
 RunService.Stepped:Connect(function()if noclip and LocalPlayer.Character then for _,p in ipairs(LocalPlayer.Character:GetDescendants())do if p:IsA("BasePart") and p.CanCollide then p.CanCollide=false end end end end)
 
-local flying = false
-local flySpeed = 3
-local Player = game.Players.LocalPlayer
-local RunService = game:GetService("RunService")
-local UIS = game:GetService("UserInputService")
-
-local ctrl = {f = 0, b = 0, l = 0, r = 0}
+-- ✈ Mobile Friendly Fly
+local flying=false
+local flySpeed=3
+local ctrl={f=0,b=0,l=0,r=0,u=0,d=0}
+local Player=game.Players.LocalPlayer
 
 PlayerTab:CreateToggle({
-    Name = "Fly",
-    CurrentValue = false,
-    Callback = function(v)
-        flying = v
-        local char = Player.Character or Player.CharacterAdded:Wait()
-        local hrp = char:WaitForChild("HumanoidRootPart")
+    Name="Fly",CurrentValue=false,
+    Callback=function(v)
+        flying=v
+        local char=Player.Character or Player.CharacterAdded:Wait()
+        local hrp=char:WaitForChild("HumanoidRootPart")
 
         if flying then
-            local bg = Instance.new("BodyGyro", hrp)
-            bg.P = 9e4
-            bg.MaxTorque = Vector3.new(9e9, 9e9, 9e9)
-            bg.CFrame = hrp.CFrame
+            local bg=Instance.new("BodyGyro",hrp)
+            bg.P=9e4 bg.MaxTorque=Vector3.new(9e9,9e9,9e9) bg.CFrame=hrp.CFrame
+            local bv=Instance.new("BodyVelocity",hrp)
+            bv.Velocity=Vector3.new(0,0.1,0) bv.MaxForce=Vector3.new(9e9,9e9,9e9)
 
-            local bv = Instance.new("BodyVelocity", hrp)
-            bv.Velocity = Vector3.new(0,0.1,0)
-            bv.MaxForce = Vector3.new(9e9, 9e9, 9e9)
-
-            RunService.RenderStepped:Connect(function()
-                if flying and hrp and hrp.Parent then
-                    local camCF = workspace.CurrentCamera.CFrame
-                    local move = Vector3.new(ctrl.l+ctrl.r, ctrl.f+ctrl.b, 0)
-                    bv.Velocity = ((camCF.LookVector * move.Y) + (camCF.RightVector * move.X)) * flySpeed
-                    bg.CFrame = camCF
+            task.spawn(function()
+                while flying and hrp and hrp.Parent do task.wait()
+                    local camCF=workspace.CurrentCamera.CFrame
+                    local move=(camCF.LookVector*(ctrl.f+ctrl.b))+(camCF.RightVector*(ctrl.l+ctrl.r))+Vector3.new(0,ctrl.u+ctrl.d,0)
+                    bv.Velocity=move*flySpeed
+                    bg.CFrame=camCF
                 end
+                if hrp:FindFirstChild("BodyGyro") then hrp.BodyGyro:Destroy() end
+                if hrp:FindFirstChild("BodyVelocity") then hrp.BodyVelocity:Destroy() end
             end)
-        else
-            if hrp:FindFirstChild("BodyGyro") then hrp.BodyGyro:Destroy() end
-            if hrp:FindFirstChild("BodyVelocity") then hrp.BodyVelocity:Destroy() end
         end
     end
 })
 
--- Controls (WASD + Space/Shift for up/down)
-UIS.InputBegan:Connect(function(i)
-    if i.KeyCode == Enum.KeyCode.W then ctrl.f = 1 end
-    if i.KeyCode == Enum.KeyCode.S then ctrl.b = -1 end
-    if i.KeyCode == Enum.KeyCode.A then ctrl.l = -1 end
-    if i.KeyCode == Enum.KeyCode.D then ctrl.r = 1 end
-    if i.KeyCode == Enum.KeyCode.Space then ctrl.b = 1 end
-    if i.KeyCode == Enum.KeyCode.LeftShift then ctrl.f = -1 end
-end)
+-- 📱 Mobile Controls (Buttons inside Rayfield)
+PlayerTab:CreateButton({Name="Fly Up",Callback=function() ctrl.u=1 task.delay(0.2,function()ctrl.u=0 end) end})
+PlayerTab:CreateButton({Name="Fly Down",Callback=function() ctrl.d=-1 task.delay(0.2,function()ctrl.d=0 end) end})
+PlayerTab:CreateButton({Name="Forward",Callback=function() ctrl.f=1 task.delay(0.2,function()ctrl.f=0 end) end})
+PlayerTab:CreateButton({Name="Backward",Callback=function() ctrl.b=-1 task.delay(0.2,function()ctrl.b=0 end) end})
+PlayerTab:CreateButton({Name="Left",Callback=function() ctrl.l=-1 task.delay(0.2,function()ctrl.l=0 end) end})
+PlayerTab:CreateButton({Name="Right",Callback=function() ctrl.r=1 task.delay(0.2,function()ctrl.r=0 end) end})
 
-UIS.InputEnded:Connect(function(i)
-    if i.KeyCode == Enum.KeyCode.W then ctrl.f = 0 end
-    if i.KeyCode == Enum.KeyCode.S then ctrl.b = 0 end
-    if i.KeyCode == Enum.KeyCode.A then ctrl.l = 0 end
-    if i.KeyCode == Enum.KeyCode.D then ctrl.r = 0 end
-    if i.KeyCode == Enum.KeyCode.Space then ctrl.b = 0 end
-    if i.KeyCode == Enum.KeyCode.LeftShift then ctrl.f = 0 end
-end)
-
--- Optional speed control slider
+-- Fly Speed
 PlayerTab:CreateSlider({
-    Name = "Fly Speed",
-    Range = {1, 10},
-    Increment = 1,
-    CurrentValue = 3,
-    Callback = function(v)
-        flySpeed = v
-    end
+    Name="Fly Speed",Range={1,10},Increment=1,CurrentValue=3,
+    Callback=function(v)flySpeed=v end
 })
 
 -- 📍 TELEPORT UTILITIES
