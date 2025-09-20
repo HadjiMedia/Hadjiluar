@@ -184,8 +184,8 @@ end)
 local selectedFallSeeds, selectedFallGears, selectedFallEggs, selectedFallCosmetics = {}, {}, {}, {}
 local autoBuyFS, autoBuyFG, autoBuyFE, autoBuyFC = false, false, false, false
 
-FarmTab:CreateLabel("Multi-select fall seeds to buy")
-FarmTab:CreateMultiChoice({
+ShopTab:CreateLabel("Fall Event Market Auto Buy")
+local Dropdown = ShopTab:CreateDropdown({
     Name = "Fall Seeds",
     Options = FallSeed,
     CurrentValue = {},
@@ -194,7 +194,7 @@ FarmTab:CreateMultiChoice({
     end
 })
 
-FarmTab:CreateToggle({
+ShopTab:CreateToggle({
     Name = "Auto Buy Fall Seeds",
     CurrentValue = false,
     Callback = function(v)
@@ -202,8 +202,7 @@ FarmTab:CreateToggle({
     end
 })
 
-FarmTab:CreateLabel("Multi-select fall gears to buy")
-FarmTab:CreateMultiChoice({
+local Dropdown = ShopTab:CreateDropdown({
     Name = "Fall Gears",
     Options = FallGear,
     CurrentValue = {},
@@ -212,7 +211,7 @@ FarmTab:CreateMultiChoice({
     end
 })
 
-FarmTab:CreateToggle({
+ShopTab:CreateToggle({
     Name = "Auto Buy Fall Gears",
     CurrentValue = false,
     Callback = function(v)
@@ -220,8 +219,7 @@ FarmTab:CreateToggle({
     end
 })
 
-FarmTab:CreateLabel("Multi-select fall eggs to buy")
-FarmTab:CreateMultiChoice({
+local Dropdown = ShopTab:CreateDropdown({
     Name = "Fall Eggs",
     Options = FallPet,
     CurrentValue = {},
@@ -230,7 +228,7 @@ FarmTab:CreateMultiChoice({
     end
 })
 
-FarmTab:CreateToggle({
+ShopTab:CreateToggle({
     Name = "Auto Buy Fall Eggs",
     CurrentValue = false,
     Callback = function(v)
@@ -238,8 +236,7 @@ FarmTab:CreateToggle({
     end
 })
 
-FarmTab:CreateLabel("Multi-select fall cosmetics to buy")
-FarmTab:CreateMultiChoice({
+local Dropdown = ShopTab:CreateDropdown({
     Name = "Fall Cosmetics",
     Options = FallCosmetics,
     CurrentValue = {},
@@ -248,7 +245,7 @@ FarmTab:CreateMultiChoice({
     end
 })
 
-FarmTab:CreateToggle({
+ShopTab:CreateToggle({
     Name = "Auto Buy Fall Cosmetics",
     CurrentValue = false,
     Callback = function(v)
