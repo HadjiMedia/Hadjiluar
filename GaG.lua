@@ -66,6 +66,16 @@ local FruitList = {
     "Watermelon", "Wildflower", "Yam", "Zucchini"
 }
 
+local GearList = {
+"Watering Can", "Trading Ticket", "Trowel", "Recall Wrench", "Basic Sprinkler", 
+"Advance Sprinkler", "Medium Toy", "Medium Treat", "Godly Sprinkler", "Magnifying Glass", 
+"Master Sprinkler", "Cleaning Sprinkler", "Cleaning Pet Shard", "Favorite Tool", "Harvest Tool",
+"Friendship Pot", "Grandmaster Sprinkler", "Levelup Lollipop"
+}
+
+local EggList = {
+"Common Egg", "Uncommon Egg", "Rare Egg", "Legendary Egg", "Mythical Egg", "Bug Egg"
+}
 -- 🌟 PLAYER UTILITIES
 PlayerTab:CreateToggle({
 	Name = "Infinite Jump",
