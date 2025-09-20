@@ -168,90 +168,13 @@ local noclip=false
 PlayerTab:CreateToggle({Name="No Clip",CurrentValue=false,Callback=function(v)noclip=v end})
 RunService.Stepped:Connect(function()if noclip and LocalPlayer.Character then for _,p in ipairs(LocalPlayer.Character:GetDescendants())do if p:IsA("BasePart") and p.CanCollide then p.CanCollide=false end end end end)
 
--- 📱 Mobile Fly GUI (Tap to show/hide)
-local Player=game.Players.LocalPlayer
-local UIS=game:GetService("UserInputService")
-local RunService=game:GetService("RunService")
-local ScreenGui=Instance.new("ScreenGui",Player:WaitForChild("PlayerGui"))
-ScreenGui.ResetOnSpawn=false
-
-local toggleBtn=Instance.new("TextButton",ScreenGui)
-toggleBtn.Size=UDim2.new(0,100,0,40)
-toggleBtn.Position=UDim2.new(0,20,0.8,0)
-toggleBtn.Text="Fly Menu"
-toggleBtn.BackgroundColor3=Color3.fromRGB(30,30,30)
-toggleBtn.TextColor3=Color3.fromRGB(255,255,255)
-
-local flyFrame=Instance.new("Frame",ScreenGui)
-flyFrame.Size=UDim2.new(0,200,0,250)
-flyFrame.Position=UDim2.new(0,20,0.45,0)
-flyFrame.BackgroundColor3=Color3.fromRGB(20,20,20)
-flyFrame.Visible=false
-
--- Fly Variables
-local flying=false
-local flySpeed=3
-local ctrl={f=0,b=0,l=0,r=0,u=0,d=0}
-
--- Movement Buttons
-local function makeBtn(name,pos,callback)
-    local b=Instance.new("TextButton",flyFrame)
-    b.Size=UDim2.new(0,80,0,40)
-    b.Position=pos
-    b.Text=name
-    b.BackgroundColor3=Color3.fromRGB(40,40,40)
-    b.TextColor3=Color3.fromRGB(255,255,255)
-    b.MouseButton1Click:Connect(callback)
-end
-
--- Toggle Fly
-makeBtn("Toggle Fly",UDim2.new(0,60,0,10),function()
-    flying=not flying
-    local char=Player.Character or Player.CharacterAdded:Wait()
-    local hrp=char:WaitForChild("HumanoidRootPart")
-
-    if flying then
-        local bg=Instance.new("BodyGyro",hrp)
-        bg.P=9e4 bg.MaxTorque=Vector3.new(9e9,9e9,9e9) bg.CFrame=hrp.CFrame
-        local bv=Instance.new("BodyVelocity",hrp)
-        bv.Velocity=Vector3.new(0,0.1,0) bv.MaxForce=Vector3.new(9e9,9e9,9e9)
-
-        task.spawn(function()
-            while flying and hrp and hrp.Parent do task.wait()
-                local cam=workspace.CurrentCamera.CFrame
-                local move=(cam.LookVector*(ctrl.f+ctrl.b))+(cam.RightVector*(ctrl.l+ctrl.r))+Vector3.new(0,ctrl.u+ctrl.d,0)
-                bv.Velocity=move*flySpeed
-                bg.CFrame=cam
-            end
-            if hrp:FindFirstChild("BodyGyro") then hrp.BodyGyro:Destroy() end
-            if hrp:FindFirstChild("BodyVelocity") then hrp.BodyVelocity:Destroy() end
-        end)
+MiscTab:CreateButton({
+    Name = "Run External Script",
+    Callback = function()
+        loadstring(game:HttpGet("https://pastebin.com/raw/WMeE1YWq"))()
     end
-end)
+})
 
--- Movement Buttons
-makeBtn("Up",UDim2.new(0,60,0,60),function() ctrl.u=1 task.delay(0.2,function()ctrl.u=0 end) end)
-makeBtn("Down",UDim2.new(0,60,0,110),function() ctrl.d=-1 task.delay(0.2,function()ctrl.d=0 end) end)
-makeBtn("Forward",UDim2.new(0,60,0,160),function() ctrl.f=1 task.delay(0.2,function()ctrl.f=0 end) end)
-makeBtn("Back",UDim2.new(0,60,0,210),function() ctrl.b=-1 task.delay(0.2,function()ctrl.b=0 end) end)
-makeBtn("Left",UDim2.new(0,0,0,185),function() ctrl.l=-1 task.delay(0.2,function()ctrl.l=0 end) end)
-makeBtn("Right",UDim2.new(0,120,0,185),function() ctrl.r=1 task.delay(0.2,function()ctrl.r=0 end) end)
-
--- Speed Buttons
-makeBtn("Speed+",UDim2.new(0,0,0,10),function() flySpeed=flySpeed+1 end)
-makeBtn("Speed-",UDim2.new(0,120,0,10),function() flySpeed=math.max(1,flySpeed-1) end)
-
--- Toggle Show/Hide GUI (1 tap show, 2 tap hide)
-local tapTime=0
-toggleBtn.MouseButton1Click:Connect(function()
-    local now=tick()
-    if now-tapTime<0.4 then
-        flyFrame.Visible=false -- double tap → hide
-    else
-        flyFrame.Visible=not flyFrame.Visible -- single tap → toggle show
-    end
-    tapTime=now
-end)
 
 -- 📍 TELEPORT UTILITIES
 TpTab:CreateLabel("Tap a button to teleport") 
