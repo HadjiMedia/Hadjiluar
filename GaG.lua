@@ -83,6 +83,23 @@ local SeedShopList = {
 	"Pepper", "Cacao", "Beanstalk", "Ember Lily", "Sugar Apple", "Burning Bud", "Giant Pinecone",
 	"Elder Strawberry", "Romanesco"
 }
+
+local FallSeed = {
+"Turnip", "Parsley", "Meyer Lemon", "Carnival Pumpkin", "Kniphofia", "Golden Peach", "Maple Resin"
+}
+
+local FallGear = {
+"Firefly Jar", "Sky Lantern", "Maple Leaf Kite", "Leaf Blower", "Maple Syrup", "Maple Sprinkler", "Bonfire", "Harvest Basket", "Maple Leaf Charm", "Golden Acorn"
+}
+
+local FallPet = {
+"Fall Egg", "Chipmunk", "Red Squirrel", "Marmot", "Sugar Glider", "Space Squirrel"
+}
+
+local FallCosmetics = {
+"Fall Create", "Fall Leaf Chair", "Maple Flag", "Flying Kite", "Fall Cosmetics"
+}
+
 -- 🌟 PLAYER UTILITIES
 PlayerTab:CreateToggle({
 	Name = "Infinite Jump",
@@ -136,6 +153,57 @@ RunService.Stepped:Connect(function()
 	end
 end)
 
+local FarmTab = Rayfield:CreateTab("FarmTab")
+local Label = Tab:CreateLabel("Fall Market Event", 4483362458, Color3.fromRGB(255, 255, 255), false) -- Title, Icon, Color, IgnoreTheme
+local autoSubmitPlants = false
+
+FarmTab:CreateLabel("Auto Submit All Plants To Fall Tree")
+FarmTab:CreateToggle({ Name = "Auto Submit All Plants", CurrentValue = false, Callback = function(v) autoSubmitPlants = v end })
+
+task.spawn(function()
+    while true do
+        if autoSubmitPlants then pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("FallMarketEvent"):WaitForChild("SubmitAllPlants"):FireServer() end) end
+        task.wait(1)
+    end
+end)
+
+FarmTab:CreateLabel("Auto Submit Held Plants To Fall Tree")
+FarmTab:CreateToggle({ Name = "Auto Submit Held Plants", CurrentValue = false, Callback = function(v) autoSubmitHeldPlants = v end })
+
+task.spawn(function()
+    while true do
+        if autoSubmitPlants then pcall(function() game:GetService("ReplicatedStorage"):WaitForChild("GameEvents"):WaitForChild("FallMarketEvent"):WaitForChild("SubmitHeldPlant"):FireServer() end) end
+        task.wait(1)
+    end
+end)
+
+local selectedFallSeeds, selectedFallGears, selectedFallEggs, selectedFallCosmetics = {}, {}, {}, {}
+local autoBuyS, autoBuyG, autoBuyE, autoBuyC = false, false, false, false
+
+ShopTab:CreateLabel("Multi-select fall seeds to buy")
+ShopTab:CreateDropdown({ Name = "Fall Seed List", Options = FallSeed, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallSeeds = v end })
+ShopTab:CreateToggle({ Name = "Auto Buy Selected Fall Seeds", CurrentValue = false, Callback = function(v) autoBuyS = v end })
+
+ShopTab:CreateLabel("Multi-select fall gears to buy")
+ShopTab:CreateDropdown({ Name = "Fall Gear List", Options = FallGear, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallGears = v end })
+ShopTab:CreateToggle({ Name = "Auto Buy Selected Fall Gears", CurrentValue = false, Callback = function(v) autoBuyG = v end })
+
+ShopTab:CreateLabel("Multi-select fall pets to buy")
+ShopTab:CreateDropdown({ Name = "Fall Pet List", Options = FallPet, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallEggs = v end })
+ShopTab:CreateToggle({ Name = "Auto Buy Selected Fall Pets", CurrentValue = false, Callback = function(v) autoBuyE = v end })
+
+ShopTab:CreateLabel("Multi-select fall cosmetics to buy")
+ShopTab:CreateDropdown({ Name = "Fall Cosmetics List", Options = FallCosmetics, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallCosmetics = v end })
+ShopTab:CreateToggle({ Name = "Auto Buy Selected Fall Cosmetics", CurrentValue = false, Callback = function(v) autoBuyC = v end })
+
+task.spawn(function()
+    while task.wait(1) do
+        if autoBuyS then for _, item in ipairs(selectedFallSeeds) do pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end) task.wait(0.3) end
+        if autoBuyG then for _, item in ipairs(selectedFallGears) do pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end) task.wait(0.3) end
+        if autoBuyE then for _, item in ipairs(selectedFallEggs) do pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end) task.wait(0.3) end
+        if autoBuyC then for _, item in ipairs(selectedFallCosmetics) do pcall(function() ReplicatedStorage.GameEvents.BuyEventShopStock:FireServer(item, 1) end) task.wait(0.3) end
+    end
+end)
 
 
 -- 🛒 SHOP AUTOMATION
