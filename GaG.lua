@@ -168,8 +168,8 @@ local noclip=false
 PlayerTab:CreateToggle({Name="No Clip",CurrentValue=false,Callback=function(v)noclip=v end})
 RunService.Stepped:Connect(function()if noclip and LocalPlayer.Character then for _,p in ipairs(LocalPlayer.Character:GetDescendants())do if p:IsA("BasePart") and p.CanCollide then p.CanCollide=false end end end end)
 
-MiscTab:CreateButton({
-    Name = "Run External Script",
+PlayerTab:CreateButton({
+    Name = "Fly GUI",
     Callback = function()
         loadstring(game:HttpGet("https://pastebin.com/raw/WMeE1YWq"))()
     end
