@@ -161,17 +161,16 @@ task.spawn(function()
     end
 end)
 
-AutoTab:CreateLabel("Auto Change Garden Slot")
 local RS = game:GetService("ReplicatedStorage")
-local aGarden = false
-local delayTime = 5
-local selSlots = {}
+local aGarden, delayTime, selSlots = false, 5, {}
 
--- Fixed mapping (Garden Slot 1 = 1, Garden Slot 2 = 2)
+-- Slot mapping (friendly names → actual IDs)
 local slotMap = {
-    ["Garden Slot 1"] = 1,
-    ["Garden Slot 2"] = 2
+    ["Garden Slot 1"] = "inC2R", -- slot 1
+    ["Garden Slot 2"] = "DEFAULT" -- slot 2
 }
+
+AutoTab:CreateLabel("Auto Change Garden Slot")
 
 AutoTab:CreateInput({
     Name = "Garden Delay (sec)",
@@ -196,7 +195,9 @@ AutoTab:CreateToggle({
     Name = "Auto Change Garden Slot",
     CurrentValue = false,
     Flag = "AutoGarden",
-    Callback = function(v) aGarden = v end
+    Callback = function(v)
+        aGarden = v
+    end
 })
 
 task.spawn(function()
@@ -205,14 +206,17 @@ task.spawn(function()
             for _, slot in ipairs(selSlots) do
                 if not aGarden then break end
                 local args = {slotMap[slot]}
-                pcall(function()
-                    RS.GameEvents.SaveSlotService.RequestChangeSlots:FireServer(unpack(args))
-                end)
+                if args[1] then
+                    pcall(function()
+                        RS.GameEvents.SaveSlotService.RequestChangeSlots:FireServer(unpack(args))
+                    end)
+                end
                 task.wait(delayTime)
             end
         end
     end
 end)
+
 
 
 
