@@ -178,23 +178,23 @@ task.spawn(function()
 end)
 
 local selectedFallSeeds, selectedFallGears, selectedFallEggs, selectedFallCosmetics = {}, {}, {}, {}
-local autoBuyS, autoBuyG, autoBuyE, autoBuyC = false, false, false, false
+local autoBuyFS, autoBuyFG, autoBuyFE, autoBuyFC = false, false, false, false
 
-ShopTab:CreateLabel("Multi-select fall seeds to buy")
-ShopTab:CreateDropdown({ Name = "Fall Seed List", Options = FallSeed, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallSeeds = v end })
-ShopTab:CreateToggle({ Name = "Auto Buy Selected Fall Seeds", CurrentValue = false, Callback = function(v) autoBuyS = v end })
+FarmTab:CreateLabel("Multi-select fall seeds to buy")
+FarmTab:CreateDropdown({ Name = "Fall Seed List", Options = FallSeed, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallSeeds = v end })
+FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Seeds", CurrentValue = false, Callback = function(v) autoBuyFS = v end })
 
-ShopTab:CreateLabel("Multi-select fall gears to buy")
-ShopTab:CreateDropdown({ Name = "Fall Gear List", Options = FallGear, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallGears = v end })
-ShopTab:CreateToggle({ Name = "Auto Buy Selected Fall Gears", CurrentValue = false, Callback = function(v) autoBuyG = v end })
+FarmTab:CreateLabel("Multi-select fall gears to buy")
+FarmTab:CreateDropdown({ Name = "Fall Gear List", Options = FallGear, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallGears = v end })
+FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Gears", CurrentValue = false, Callback = function(v) autoBuyFG = v end })
 
-ShopTab:CreateLabel("Multi-select fall pets to buy")
-ShopTab:CreateDropdown({ Name = "Fall Pet List", Options = FallPet, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallEggs = v end })
-ShopTab:CreateToggle({ Name = "Auto Buy Selected Fall Pets", CurrentValue = false, Callback = function(v) autoBuyE = v end })
+FarmTab:CreateLabel("Multi-select fall pets to buy")
+FarmTab:CreateDropdown({ Name = "Fall Pet List", Options = FallPet, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallEggs = v end })
+FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Pets", CurrentValue = false, Callback = function(v) autoBuyFE = v end })
 
-ShopTab:CreateLabel("Multi-select fall cosmetics to buy")
-ShopTab:CreateDropdown({ Name = "Fall Cosmetics List", Options = FallCosmetics, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallCosmetics = v end })
-ShopTab:CreateToggle({ Name = "Auto Buy Selected Fall Cosmetics", CurrentValue = false, Callback = function(v) autoBuyC = v end })
+FarmTab:CreateLabel("Multi-select fall cosmetics to buy")
+FarmTab:CreateDropdown({ Name = "Fall Cosmetics List", Options = FallCosmetics, MultipleOptions = true, Default = {}, Callback = function(v) selectedFallCosmetics = v end })
+FarmTab:CreateToggle({ Name = "Auto Buy Selected Fall Cosmetics", CurrentValue = false, Callback = function(v) autoBuyFC = v end })
 
 task.spawn(function()
     while task.wait(1) do
