@@ -230,15 +230,15 @@ task.spawn(function()
     while task.wait(1) do
         if autoBuyS then
             for _, seed in ipairs(selectedSeeds) do
-                local args = { "Tier 1", seed } -- Dynamic args for each selected seed
                 pcall(function() 
                     ReplicatedStorage.GameEvents.BuySeedStock:FireServer(unpack(args)) 
                 end)
-                task.wait(0.3) -- Wait to prevent spamming
+                task.wait(0.3)
             end
         end
     end
 end)
+
 
 
 local gearShopList = GearList -- Assuming GearList is already defined
