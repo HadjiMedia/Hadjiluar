@@ -33,7 +33,8 @@ local RunService = game:GetService("RunService")
 local LocalPlayer = Players.LocalPlayer
 
 -- ✅ TABS
-local FarmTab = Window:CreateTab("Auto Farm")
+local AutoTab = Window:CreateTab("Automatic")
+local FarmTab = Window:CreateTab("Event")
 local ShopTab = Window:CreateTab("Shop")
 local PlayerTab = Window:CreateTab("Local Player")
 local TpTab = Window:CreateTab("Teleport Location")
@@ -89,7 +90,8 @@ local FallSeed = {
 }
 
 local FallGear = {
-"Firefly Jar", "Sky Lantern", "Maple Leaf Kite", "Leaf Blower", "Maple Syrup", "Maple Sprinkler", "Bonfire", "Harvest Basket", "Maple Leaf Charm", "Golden Acorn"
+"Firefly Jar", "Sky Lantern", "Maple Leaf Kite", "Leaf Blower", "Maple Syrup", "Maple Sprinkler", 
+"Bonfire", "Harvest Basket", "Maple Leaf Charm", "Golden Acorn"
 }
 
 local FallPet = {
@@ -99,6 +101,96 @@ local FallPet = {
 local FallCosmetics = {
 "Fall Create", "Fall Leaf Chair", "Maple Flag", "Flying Kite", "Fall Cosmetics"
 }
+
+--Automatic Tab
+AutoTab:CreateLabel("Auto Sell")
+local RS=game:GetService("ReplicatedStorage") local aPet,aHandle,aBag=false,false,false
+
+AutoTab:CreateToggle({Name="Auto Sell Pets",CurrentValue=false,Flag="AutoSellPet",Callback=function(v)aPet=v end})
+AutoTab:CreateToggle({Name="Auto Sell Handles",CurrentValue=false,Flag="AutoSellHandle",Callback=function(v)aHandle=v end})
+AutoTab:CreateToggle({Name="Auto Sell Backpack",CurrentValue=false,Flag="AutoSellBag",Callback=function(v)aBag=v end})
+
+task.spawn(function()while task.wait(1)do
+ if aPet then pcall(function()RS.GameEvents.SellPet_RE:FireServer(Instance.new("Tool"))end)end
+ if aHandle then pcall(function()RS.GameEvents.Sell_Item:FireServer()end)end
+ if aBag then pcall(function()RS.GameEvents.Sell_Inventory:FireServer()end)end
+end end)
+
+AutoTab:CreateLabel("Auto Rebirth/Ascend, Note: Held the required fruit or item to automatic rebirth, sheckles/money must be can buy ascend.")
+local RS=game:GetService("ReplicatedStorage") local aReb=false
+
+Tab:CreateToggle({Name="Auto Rebirth",CurrentValue=false,Flag="AutoRebirth",Callback=function(v)aReb=v end})
+
+task.spawn(function()while task.wait(1)do
+ if aReb then pcall(function()RS.GameEvents.BuyRebirth:FireServer()end)end
+end end)
+
+AutoTab:CreateLabel("Auto Feed/Give food to NPC")
+local RS=game:GetService("ReplicatedStorage") local selNPC,aFeed=nil,false
+
+AutoTab:CreateDropdown({Name="NPC List",Options={"Sam","Isaac","Eloise","Raphael"},MultipleOptions=false,Default={},Callback=function(v)selNPC=v end})
+AutoTab:CreateToggle({Name="Auto Feed NPC",CurrentValue=false,Flag="AutoFeedNPC",Callback=function(v)aFeed=v end})
+
+task.spawn(function()while task.wait(1)do
+ if aFeed and selNPC then pcall(function()RS.GameEvents.FeedNPC_RE:FireServer(selNPC)end)end
+end end)
+
+AutoTab:CreateLabel("Auto Change Pet Loadout")
+local RS=game:GetService("ReplicatedStorage")
+local aSwap=false delayTime=5 swapSlots={}
+local order={"1","3","2"} -- fixed cycle
+
+AutoTab:CreateInput({Name="Swap Delay (sec)",PlaceholderText="Enter seconds",RemoveTextAfterFocusLost=true,Callback=function(v)delayTime=tonumber(v)or 5 end})
+AutoTab:CreateDropdown({Name="Select Loadouts",Options={"1","2","3"},MultipleOptions=false,Default={},Callback=function(v)swapSlots=v end})
+AutoTab:CreateToggle({Name="Auto Swap Pets",CurrentValue=false,Flag="AutoSwapPets",Callback=function(v)aSwap=v end})
+
+task.spawn(function()
+    while task.wait() do
+        if aSwap and #swapSlots>0 then
+            for _,slot in ipairs(order) do
+                if not aSwap then break end
+                for _,sel in ipairs(swapSlots) do
+                    if sel==slot then
+                        local args={"SwapPetLoadout",tonumber(slot)}
+                        pcall(function()RS.GameEvents.PetsService:FireServer(unpack(args))end)
+                        task.wait(delayTime)
+                    end
+                end
+            end
+        end
+    end
+end)
+
+AutoTab:CreateLabel("Auto Change Garden Slot)
+local RS=game:GetService("ReplicatedStorage")
+local aGarden=false delayTime=5 selSlots={}
+local slotMap={["Garden Slot 1"]="inC2R",["Garden Slot 2"]="DEFAULT"}
+
+AutoTab:CreateInput({Name="Garden Delay (sec)",PlaceholderText="Enter seconds",RemoveTextAfterFocusLost=true,Callback=function(v)delayTime=tonumber(v)or 5 end})
+AutoTab:CreateDropdown({
+    Name="Select Garden Slots",
+    Options={"Garden Slot 1","Garden Slot 2"},
+    MultipleOptions=true,
+    Default={},
+    Callback=function(v)selSlots=v
+end})
+AutoTab:CreateToggle({Name="Auto Change Garden Slot",CurrentValue=false,Flag="AutoGarden",Callback=function(v)aGarden=v end})
+
+task.spawn(function()
+    while task.wait() do
+        if aGarden and #selSlots>0 then
+            for _,slot in ipairs(selSlots) do
+                if not aGarden then break end
+                local args={slotMap[slot]}
+                pcall(function()RS.GameEvents.SaveSlotService.RequestChangeSlots:FireServer(unpack(args))end)
+                task.wait(delayTime)
+            end
+        end
+    end
+end)
+
+
+
 
 -- 🌟 PLAYER UTILITIES
 PlayerTab:CreateToggle({
@@ -385,26 +477,57 @@ MiscTab:CreateButton({
 })
 
 -- 💾 CONFIG SYSTEM
+-- Default config name when script loads
+Rayfield:SetConfigurationName("Default")
 Rayfield:LoadConfiguration()
 
-MiscTab:CreateButton({ Name = "Save Config", Callback = function() Rayfield:SaveConfiguration() end })
-MiscTab:CreateButton({ Name = "Load Config", Callback = function() Rayfield:LoadConfiguration() end })
-MiscTab:CreateInput({
-	Name = "Create Config",
-	PlaceholderText = "Enter config name",
-	Callback = function(name)
-		Rayfield:SetConfigurationName(name)
-		Rayfield:SaveConfiguration()
-	end
+-- Save button
+MiscTab:CreateButton({
+    Name = "Save Config",
+    Callback = function()
+        Rayfield:SaveConfiguration()
+        Rayfield:Notify({Title="Config",Content="Configuration saved successfully.",Duration=5})
+    end
 })
 
-MiscTab:CreateInput({
-	Name = "Delete Config (Manual)",
-	PlaceholderText = "Delete via folder",
-	Callback = function()
-		Rayfield:Notify({ Title = "Notice", Content = "Please delete config files manually in workspace folder.", Duration = 5 })
-	end
+-- Load button
+MiscTab:CreateButton({
+    Name = "Load Config",
+    Callback = function()
+        Rayfield:LoadConfiguration()
+        Rayfield:Notify({Title="Config",Content="Configuration loaded successfully.",Duration=5})
+    end
 })
+
+-- Create new config
+MiscTab:CreateInput({
+    Name = "Create Config",
+    PlaceholderText = "Enter config name",
+    Callback = function(name)
+        if name and name~="" then
+            Rayfield:SetConfigurationName(name)
+            Rayfield:SaveConfiguration()
+            Rayfield:Notify({Title="Config",Content="New configuration '"..name.."' created.",Duration=5})
+        else
+            Rayfield:Notify({Title="Error",Content="Please enter a valid config name.",Duration=5})
+        end
+    end
+})
+
+-- Delete config notice
+MiscTab:CreateInput({
+    Name = "Delete Config (Manual)",
+    PlaceholderText = "Delete via folder",
+    Callback = function()
+        Rayfield:Notify({
+            Title="Notice",
+            Content="Please delete config files manually in your workspace folder.",
+            Duration=6
+        })
+    end
+})
+
+	
 -- Further enhancements or additions as required
 
 -- UI elements & script finish
