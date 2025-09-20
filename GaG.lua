@@ -156,3 +156,45 @@ task.spawn(function()while task.wait(1)do
  if autoBuyG then for _,g in ipairs(selectedGears)do pcall(function()ReplicatedStorage.GameEvents.BuyGearStock:FireServer(g)end)task.wait(.3)end end
  if autoBuyE then for _,e in ipairs(selectedEggs)do pcall(function()ReplicatedStorage.GameEvents.BuyPetEgg:FireServer(e)end)task.wait(.3)end end
 end end)
+
+-- 🌟 PLAYER UTILITIES
+PlayerTab:CreateToggle({Name="Infinite Jump",CurrentValue=false,Callback=function(v)_G.infinjump=v end})
+game:GetService("UserInputService").JumpRequest:Connect(function()if _G.infinjump then local hum=LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")if hum then hum:ChangeState(Enum.HumanoidStateType.Jumping)end end end)
+
+PlayerTab:CreateSlider({Name="WalkSpeed",Range={16,150},Increment=1,CurrentValue=16,Callback=function(v)local hum=LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")if hum then hum.WalkSpeed=v end end})
+PlayerTab:CreateSlider({Name="JumpPower",Range={50,200},Increment=5,CurrentValue=50,Callback=function(v)local hum=LocalPlayer.Character and LocalPlayer.Character:FindFirstChildWhichIsA("Humanoid")if hum then hum.JumpPower=v end end})
+
+local noclip=false
+PlayerTab:CreateToggle({Name="No Clip",CurrentValue=false,Callback=function(v)noclip=v end})
+RunService.Stepped:Connect(function()if noclip and LocalPlayer.Character then for _,p in ipairs(LocalPlayer.Character:GetDescendants())do if p:IsA("BasePart") and p.CanCollide then p.CanCollide=false end end end end)
+
+local flying=false local speed=50
+PlayerTab:CreateToggle({Name="Fly",CurrentValue=false,Callback=function(v)flying=v if v then local hum=LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")if hum then hum.PlatformStand=true end task.spawn(function()while flying do local hrp=LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")if hrp then local dir=Vector3.zero local uis=game:GetService("UserInputService")if uis:IsKeyDown(Enum.KeyCode.W)then dir=dir+workspace.CurrentCamera.CFrame.LookVector end if uis:IsKeyDown(Enum.KeyCode.S)then dir=dir-workspace.CurrentCamera.CFrame.LookVector end if uis:IsKeyDown(Enum.KeyCode.A)then dir=dir-workspace.CurrentCamera.CFrame.RightVector end if uis:IsKeyDown(Enum.KeyCode.D)then dir=dir+workspace.CurrentCamera.CFrame.RightVector end hrp.Velocity=dir*speed end task.wait()end end)else local hum=LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")if hum then hum.PlatformStand=false end end end})
+PlayerTab:CreateSlider({Name="Fly Speed",Range={10,200},Increment=5,CurrentValue=50,Callback=function(v)speed=v end})
+
+-- 📍 TELEPORT UTILITIES
+TpTab:CreateLabel("Tap a button to teleport") 
+local function teleportTo(cframe) 
+local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait() 
+local hrp = char:WaitForChild("HumanoidRootPart") hrp.CFrame = cframe end
+
+TpTab:CreateButton({ Name = "Seed Shop", Callback = function() teleportTo(CFrame.new(86.581, 3, -27.003)) end }) 
+TpTab:CreateButton({ Name = "Sell Stuff", Callback = function() teleportTo(CFrame.new(86.585, 3, 0.427)) end }) 
+TpTab:CreateButton({ Name = "Gear Shop", Callback = function() teleportTo(CFrame.new(-284.945, 3, -13.171)) end }) 
+TpTab:CreateButton({ Name = "Pet/Egg Shop", Callback = function() teleportTo(CFrame.new(-283.833, 3, -1.397)) end }) 
+TpTab:CreateButton({ Name = "Cosmetics Shop", Callback = function() teleportTo(CFrame.new(-283.216, 3, -25.605)) end }) 
+TpTab:CreateButton({ Name = "Event", Callback = function() teleportTo(CFrame.new(-103.816, 4.4, -6.888)) end })
+
+-- 🔧 MISC UTILITIES
+MiscTab:CreateButton({ Name = "Rejoin Server", Callback = function() TeleportService:Teleport(game.PlaceId, LocalPlayer) end })
+local currentJobId = game.JobId or "Unavailable" MiscTab:CreateParagraph({ Title = "Your JobId", Content = currentJobId })
+MiscTab:CreateButton({ Name = "Copy JobId to Clipboard", Callback = function() if setclipboard then setclipboard(currentJobId) Rayfield:Notify({Title = "Copied", Content = "JobId copied to clipboard!", Duration = 3}) end end }) 
+MiscTab:CreateInput({ Name = "Enter JobId to Join", PlaceholderText = "Paste JobId here...", Callback = function(jobId) if jobId ~= "" then TeleportService:TeleportToPlaceInstance(game.PlaceId, jobId, LocalPlayer) end end })
+MiscTab:CreateButton({ Name = "Server Hop", Callback = function() local url = "https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100" local success, result = pcall(function() return HttpService:JSONDecode(game:HttpGet(url)) end) if success and result and result.data then for _, server in ipairs(result.data) do if server.playing < server.maxPlayers and server.id ~= currentJobId then TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id, LocalPlayer) break end end end end }) 
+
+-- 💾 CONFIG SYSTEM
+-- Default config name when script loads Rayfield:SetConfigurationName("Default") Rayfield:LoadConfiguration() -- Save button 
+MiscTab:CreateButton({ Name = "Save Config", Callback = function() Rayfield:SaveConfiguration() Rayfield:Notify({Title="Config",Content="Configuration saved successfully.",Duration=5}) end }) -- Load button 
+MiscTab:CreateButton({ Name = "Load Config", Callback = function() Rayfield:LoadConfiguration() Rayfield:Notify({Title="Config",Content="Configuration loaded successfully.",Duration=5}) end }) -- Create new config
+MiscTab:CreateInput({ Name = "Create Config", PlaceholderText = "Enter config name", Callback = function(name) if name and name~="" then Rayfield:SetConfigurationName(name) Rayfield:SaveConfiguration() Rayfield:Notify({Title="Config",Content="New configuration '"..name.."' created.",Duration=5}) else Rayfield:Notify({Title="Error",Content="Please enter a valid config name.",Duration=5}) end end }) -- Delete config notice
+MiscTab:CreateInput({ Name = "Delete Config (Manual)", PlaceholderText = "Delete via folder", Callback = function() Rayfield:Notify({ Title="Notice", Content="Please delete config files manually in your workspace folder.", Duration=6 }) end }) -- Further enhancements or additions as required -- UI elements & script finish Rayfield:Init()
