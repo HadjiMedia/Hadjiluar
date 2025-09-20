@@ -119,7 +119,7 @@ end end)
 AutoTab:CreateLabel("Auto Rebirth/Ascend, Note: Held the required fruit or item to automatic rebirth, sheckles/money must be can buy ascend.")
 local RS=game:GetService("ReplicatedStorage") local aReb=false
 
-Tab:CreateToggle({Name="Auto Rebirth",CurrentValue=false,Flag="AutoRebirth",Callback=function(v)aReb=v end})
+AutoTab:CreateToggle({Name="Auto Rebirth",CurrentValue=false,Flag="AutoRebirth",Callback=function(v)aReb=v end})
 
 task.spawn(function()while task.wait(1)do
  if aReb then pcall(function()RS.GameEvents.BuyRebirth:FireServer()end)end
@@ -161,28 +161,53 @@ task.spawn(function()
     end
 end)
 
-AutoTab:CreateLabel("Auto Change Garden Slot)
-local RS=game:GetService("ReplicatedStorage")
-local aGarden=false delayTime=5 selSlots={}
-local slotMap={["Garden Slot 1"]="inC2R",["Garden Slot 2"]="DEFAULT"}
+AutoTab:CreateLabel("Auto Change Garden Slot")
+local RS = game:GetService("ReplicatedStorage")
+local aGarden = false
+local delayTime = 5
+local selSlots = {}
 
-AutoTab:CreateInput({Name="Garden Delay (sec)",PlaceholderText="Enter seconds",RemoveTextAfterFocusLost=true,Callback=function(v)delayTime=tonumber(v)or 5 end})
+-- Fixed mapping (Garden Slot 1 = 1, Garden Slot 2 = 2)
+local slotMap = {
+    ["Garden Slot 1"] = 1,
+    ["Garden Slot 2"] = 2
+}
+
+AutoTab:CreateInput({
+    Name = "Garden Delay (sec)",
+    PlaceholderText = "Enter seconds",
+    RemoveTextAfterFocusLost = true,
+    Callback = function(v)
+        delayTime = tonumber(v) or 5
+    end
+})
+
 AutoTab:CreateDropdown({
-    Name="Select Garden Slots",
-    Options={"Garden Slot 1","Garden Slot 2"},
-    MultipleOptions=true,
-    Default={},
-    Callback=function(v)selSlots=v
-end})
-AutoTab:CreateToggle({Name="Auto Change Garden Slot",CurrentValue=false,Flag="AutoGarden",Callback=function(v)aGarden=v end})
+    Name = "Select Garden Slots",
+    Options = {"Garden Slot 1","Garden Slot 2"},
+    MultipleOptions = true,
+    Default = {},
+    Callback = function(v)
+        selSlots = v
+    end
+})
+
+AutoTab:CreateToggle({
+    Name = "Auto Change Garden Slot",
+    CurrentValue = false,
+    Flag = "AutoGarden",
+    Callback = function(v) aGarden = v end
+})
 
 task.spawn(function()
     while task.wait() do
-        if aGarden and #selSlots>0 then
-            for _,slot in ipairs(selSlots) do
+        if aGarden and #selSlots > 0 then
+            for _, slot in ipairs(selSlots) do
                 if not aGarden then break end
-                local args={slotMap[slot]}
-                pcall(function()RS.GameEvents.SaveSlotService.RequestChangeSlots:FireServer(unpack(args))end)
+                local args = {slotMap[slot]}
+                pcall(function()
+                    RS.GameEvents.SaveSlotService.RequestChangeSlots:FireServer(unpack(args))
+                end)
                 task.wait(delayTime)
             end
         end
