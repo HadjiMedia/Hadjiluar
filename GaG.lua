@@ -12,7 +12,7 @@ local Window = Rayfield:CreateWindow({
 		FolderName = nil,
 		FileName = "GAG"
 	},
-	KeySystem = true,
+	KeySystem = false,
 	KeySettings = {
 		Title = "Grow a Garden | Key",
 		Subtitle = "Key System",
